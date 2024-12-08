@@ -1,4 +1,4 @@
-using HCMSIU_SSPS.Models;
+﻿using HCMSIU_SSPS.Models;
 using HCMSIU_SSPS.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,7 +7,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<HcmsiuSspsContext>();
 builder.Services.AddScoped<IEmailService, EmailService>();
-
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromHours(4); // Thời gian sống của Session
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -24,9 +30,19 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
+app.UseSession();
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllerRoute(
+      name: "areas",
+      pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
+    );
+    endpoints.MapControllerRoute(
+        name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}"
+        );
+});
 
 app.Run();

@@ -68,7 +68,7 @@ namespace HCMSIU_SSPS.Controllers
             string subject = "Thông tin mật khẩu của bạn";
             string body = $"Xin chào {user.UserName},<br><br>"
                         + "Mật khẩu hiện tại của bạn là: <strong>" + currentPassword + "</strong><br><br>"
-                        + "Trân trọng,<br>Bệnh viện SIU";
+                        + "Trân trọng,<br>HCMSIU SSPS";
 
             bool emailSent = await _emailService.SendEmailAsync(Email, subject, body);
 
