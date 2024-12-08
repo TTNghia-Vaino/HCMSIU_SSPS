@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34622.214
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HCMSIU_SSPS", "HCMSIU_SSPS.csproj", "{269D0772-F298-448E-9AC7-73345A2B8B41}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{269D0772-F298-448E-9AC7-73345A2B8B41}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{269D0772-F298-448E-9AC7-73345A2B8B41}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{269D0772-F298-448E-9AC7-73345A2B8B41}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{269D0772-F298-448E-9AC7-73345A2B8B41}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {782C181F-A93C-4790-BF4D-7A994202E9C7}
+	EndGlobalSection
+EndGlobal
