@@ -1,7 +1,12 @@
+using HCMSIU_SSPS.Models;
+using HCMSIU_SSPS.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddDbContext<HcmsiuSspsContext>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 var app = builder.Build();
 
