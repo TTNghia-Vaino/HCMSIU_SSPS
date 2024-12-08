@@ -1,0 +1,83 @@
+﻿@model IEnumerable<HCMSIU_SSPS.Models.PrintJob>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.FileName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PageCount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TotalPages)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Copies)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsDoubleSided)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.StartTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EndTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Printer)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.User)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.FileName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PageCount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TotalPages)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Copies)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IsDoubleSided)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StartTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EndTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Printer.PrinterId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.User.UserId)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.PrintJobId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.PrintJobId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.PrintJobId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

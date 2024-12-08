@@ -1,0 +1,48 @@
+﻿@model HCMSIU_SSPS.Models.SystemSetting
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>SystemSetting</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="SettingId" class="control-label"></label>
+                <input asp-for="SettingId" class="form-control" />
+                <span asp-validation-for="SettingId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SettingKey" class="control-label"></label>
+                <input asp-for="SettingKey" class="form-control" />
+                <span asp-validation-for="SettingKey" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SettingValue" class="control-label"></label>
+                <input asp-for="SettingValue" class="form-control" />
+                <span asp-validation-for="SettingValue" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LastUpdated" class="control-label"></label>
+                <input asp-for="LastUpdated" class="form-control" />
+                <span asp-validation-for="LastUpdated" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
