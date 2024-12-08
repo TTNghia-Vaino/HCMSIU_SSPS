@@ -26,7 +26,8 @@ public partial class HcmsiuSspsContext : DbContext
     public virtual DbSet<User> Users { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-       => optionsBuilder.UseSqlServer("Data Source=nghia\\sqlexpress;Initial Catalog=HCMSIU_SSPS;Integrated Security=True;Trust Server Certificate=True");
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Data Source=nghia\\sqlexpress;Initial Catalog=HCMSIU_SSPS;Integrated Security=True;Encrypt=True;Trust Server Certificate=True");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -64,6 +65,9 @@ public partial class HcmsiuSspsContext : DbContext
             entity.Property(e => e.Brand)
                 .HasMaxLength(255)
                 .IsUnicode(false);
+            entity.Property(e => e.IsEnable)
+                .HasDefaultValue(1)
+                .HasColumnName("isEnable");
             entity.Property(e => e.Location)
                 .HasMaxLength(255)
                 .IsUnicode(false);

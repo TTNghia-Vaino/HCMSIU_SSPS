@@ -15,5 +15,7 @@ public partial class Printer
 
     public string? Location { get; set; }
 
+    public int? IsEnable { get; set; }
+
     public virtual ICollection<PrintJob> PrintJobs { get; set; } = new List<PrintJob>();
 }
