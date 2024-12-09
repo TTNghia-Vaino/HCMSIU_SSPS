@@ -37,9 +37,17 @@
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.IsEnable)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IsEnable)
+        <dd class="col-sm-10">
+            @if (Model.IsEnable == 1)
+            {
+                @:Yes
+            }
+            else
+            {
+                @:No
+            }
         </dd>
+
     </dl>
 </div>
 <div>

@@ -15,11 +15,11 @@
         <table class="table table-bordered table-striped">
             <thead class="thead-dark">
                 <tr>
-                    <th>@Html.DisplayNameFor(model => model.PrinterName)</th>
+                    <th>Printer Name</th>
                     <th>@Html.DisplayNameFor(model => model.Brand)</th>
                     <th>@Html.DisplayNameFor(model => model.Model)</th>
                     <th>@Html.DisplayNameFor(model => model.Location)</th>
-                    <th>@Html.DisplayNameFor(model => model.IsEnable)</th>
+                    <th>Is Enable?</th>
                     <th class="text-center">Actions</th>
                 </tr>
             </thead>
@@ -31,7 +31,14 @@
                         <td>@Html.DisplayFor(modelItem => item.Brand)</td>
                         <td>@Html.DisplayFor(modelItem => item.Model)</td>
                         <td>@Html.DisplayFor(modelItem => item.Location)</td>
-                        <td>@Html.DisplayFor(modelItem => item.IsEnable)</td>
+                        @if (item.IsEnable == 1)
+                        {
+                            <td>Yes</td>
+                        }
+                        else
+                        {
+                            <td>No</td>
+                        }
                         <td class="text-center">
                             <a asp-action="Edit" asp-route-id="@item.PrinterId" class="btn btn-warning btn-sm">Edit</a>
                             <a asp-action="Details" asp-route-id="@item.PrinterId" class="btn btn-info btn-sm">Details</a>

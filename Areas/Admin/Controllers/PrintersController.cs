@@ -56,6 +56,7 @@ namespace HCMSIU_SSPS.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("PrinterId,PrinterName,Brand,Model,Location,IsEnable")] Printer printer)
         {
+            printer.IsEnable = 1; // Enable after Create a new printer
             if (ModelState.IsValid)
             {
                 _context.Add(printer);

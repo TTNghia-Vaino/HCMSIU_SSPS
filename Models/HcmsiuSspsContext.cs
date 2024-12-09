@@ -33,7 +33,7 @@ public partial class HcmsiuSspsContext : DbContext
     {
         modelBuilder.Entity<PrintJob>(entity =>
         {
-            entity.HasKey(e => e.PrintJobId).HasName("PK__PrintJob__180135C02457328B");
+            entity.HasKey(e => e.PrintJobId).HasName("PK__PrintJob__180135C0FD672AE5");
 
             entity.Property(e => e.PrintJobId)
                 .ValueGeneratedNever()
@@ -44,20 +44,21 @@ public partial class HcmsiuSspsContext : DbContext
                 .IsUnicode(false);
             entity.Property(e => e.PrinterId).HasColumnName("PrinterID");
             entity.Property(e => e.StartTime).HasColumnType("datetime");
+            entity.Property(e => e.Status).HasDefaultValue(0);
             entity.Property(e => e.UserId).HasColumnName("UserID");
 
             entity.HasOne(d => d.Printer).WithMany(p => p.PrintJobs)
                 .HasForeignKey(d => d.PrinterId)
-                .HasConstraintName("FK__PrintJobs__Print__4F7CD00D");
+                .HasConstraintName("FK__PrintJobs__Print__6754599E");
 
             entity.HasOne(d => d.User).WithMany(p => p.PrintJobs)
                 .HasForeignKey(d => d.UserId)
-                .HasConstraintName("FK__PrintJobs__UserI__4E88ABD4");
+                .HasConstraintName("FK__PrintJobs__UserI__66603565");
         });
 
         modelBuilder.Entity<Printer>(entity =>
         {
-            entity.HasKey(e => e.PrinterId).HasName("PK__Printers__D452AB219C290B39");
+            entity.HasKey(e => e.PrinterId).HasName("PK__Printers__D452AB214D7E42B0");
 
             entity.Property(e => e.PrinterId)
                 .ValueGeneratedNever()
@@ -81,7 +82,7 @@ public partial class HcmsiuSspsContext : DbContext
 
         modelBuilder.Entity<SystemSetting>(entity =>
         {
-            entity.HasKey(e => e.SettingId).HasName("PK__SystemSe__54372AFD7684E650");
+            entity.HasKey(e => e.SettingId).HasName("PK__SystemSe__54372AFD44E54B5A");
 
             entity.Property(e => e.SettingId)
                 .ValueGeneratedNever()
@@ -97,7 +98,7 @@ public partial class HcmsiuSspsContext : DbContext
 
         modelBuilder.Entity<Transaction>(entity =>
         {
-            entity.HasKey(e => e.TransactionId).HasName("PK__Transact__55433A4B8407E51B");
+            entity.HasKey(e => e.TransactionId).HasName("PK__Transact__55433A4BCA3E89CC");
 
             entity.Property(e => e.TransactionId)
                 .ValueGeneratedNever()
@@ -111,12 +112,12 @@ public partial class HcmsiuSspsContext : DbContext
 
             entity.HasOne(d => d.User).WithMany(p => p.Transactions)
                 .HasForeignKey(d => d.UserId)
-                .HasConstraintName("FK__Transacti__UserI__52593CB8");
+                .HasConstraintName("FK__Transacti__UserI__68487DD7");
         });
 
         modelBuilder.Entity<User>(entity =>
         {
-            entity.HasKey(e => e.UserId).HasName("PK__Users__1788CCACCCC69E06");
+            entity.HasKey(e => e.UserId).HasName("PK__Users__1788CCAC8E593E94");
 
             entity.Property(e => e.UserId).HasColumnName("UserID");
             entity.Property(e => e.Email).HasMaxLength(255);
