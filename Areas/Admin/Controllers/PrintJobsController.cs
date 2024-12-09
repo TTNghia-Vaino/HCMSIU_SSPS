@@ -136,7 +136,39 @@ namespace HCMSIU_SSPS.Areas.Admin.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+        [HttpPost]
+        public async Task<IActionResult> ChangeStatus(int printJobId, int currentStatus)
+        {
+            // Tìm công việc in trong cơ sở dữ liệu
+            var printJob = await _context.PrintJobs.FindAsync(printJobId);
+            if (printJob == null)
+            {
+                return Json(new { success = false, message = "Print job not found." });
+            }
 
+            // Đổi trạng thái từ 0 thành 1 hoặc từ 1 thành 0
+            var newStatus = currentStatus == 0 ? 1 : 0;
+            printJob.Status = newStatus;
+
+            // Cập nhật EndTime theo trạng thái
+            DateTime? newEndTime = null;
+            if (newStatus == 1)  // Nếu trạng thái mới là "Done", cập nhật EndTime
+            {
+                printJob.EndTime = DateTime.Now;
+                newEndTime = printJob.EndTime;
+            }
+            else  // Nếu trạng thái mới là "Pending", set EndTime = null
+            {
+                printJob.EndTime = null;
+            }
+
+            // Lưu thay đổi vào database
+            _context.PrintJobs.Update(printJob);
+            await _context.SaveChangesAsync();
+
+            // Trả về kết quả bao gồm trạng thái mới và EndTime (nếu có)
+            return Json(new { success = true, newStatus = printJob.Status, newEndTime = newEndTime });
+        }
         private bool PrintJobExists(int id)
         {
             return _context.PrintJobs.Any(e => e.PrintJobId == id);

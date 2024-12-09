@@ -3,6 +3,11 @@
 @{
     ViewData["Title"] = "Print Jobs List";
 }
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
 
 <h1 class="text-center mt-4 mb-5">Print Jobs List</h1>
 
@@ -21,8 +26,8 @@
                     <th>@Html.DisplayNameFor(model => model.EndTime)</th>
                     <th>@Html.DisplayNameFor(model => model.Printer)</th>
                     <th>@Html.DisplayNameFor(model => model.User)</th>
-                    <th>@Html.DisplayNameFor(model => model.Status)</th>
-                    <th class="text-center">Actions</th>
+                    <th style="width: 80px;"> @Html.DisplayNameFor(model => model.Status) </th> <!--làm cho cột này rộng ra 1 tí-->
+                    <th class="text-center" style="width:300px">Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -35,16 +40,24 @@
                         <td>@Html.DisplayFor(modelItem => item.Copies)</td>
                         <td>@Html.DisplayFor(modelItem => item.IsDoubleSided)</td>
                         <td>@item.StartTime?.ToString("g")</td>
-                        <td>@item.EndTime?.ToString("g")</td>
+                        <td data-id="@item.PrintJobId">
+                            @item.EndTime?.ToString("g")  <!-- Hiển thị EndTime hoặc "N/A" nếu null -->
+                        </td>
                         <td>@item.Printer?.PrinterId</td>
-                        <td>@item.User?.UserId</td>
-                        <td>
+                        <td>@item.User?.UserName</td>
+                        <td data-id="@item.PrintJobId">
                             @(item.Status == 0 ? "Pending" : (item.Status == 1 ? "Done" : "N/A"))
                         </td>
 
+
                         <td class="text-center">
-                            <a asp-action="Edit" asp-route-id="@item.PrintJobId" class="btn btn-warning btn-sm">Edit</a>
-                            <a asp-action="Details" asp-route-id="@item.PrintJobId" class="btn btn-info btn-sm">Details</a>
+                           @*  <a asp-action="Edit" asp-route-id="@item.PrintJobId" class="btn btn-warning btn-sm">Edit</a> *@ <!--Viết Ajax cho cái button này button tên là đỏi trạng thái, sẽ tác động lên item.status, nếu đang là 0 thì đổi thành 1, 1 thì đổi thành 0 -->
+                            <button class="btn btn-warning btn-sm changeStatusBtn"
+                                    data-id="@item.PrintJobId"
+                                    data-status="@item.Status">
+                                Change Status
+                            </button>
+                           <a asp-action="Details" asp-route-id="@item.PrintJobId" class="btn btn-info btn-sm">Details</a>
                             <a asp-action="Delete" asp-route-id="@item.PrintJobId" class="btn btn-danger btn-sm">Delete</a>
                         </td>
                     </tr>
@@ -53,3 +66,58 @@
         </table>
     </div>
 </div>
+
+
+<script>
+    $(document).ready(function () {
+        // Lắng nghe sự kiện click cho tất cả các nút "Change Status"
+        $('button.changeStatusBtn').click(function () {
+            var button = $(this);  // Lấy đối tượng button đã click
+            var printJobId = button.data('id');  // Lấy printJobId từ thuộc tính data-id
+            var currentStatus = button.data('status');  // Lấy status hiện tại từ thuộc tính data-status
+
+            // Chuyển trạng thái mới (nếu 0 thì chuyển thành 1, ngược lại)
+            var newStatus = currentStatus === 0 ? 1 : 0;
+
+            // Gửi AJAX request đến controller để thay đổi trạng thái
+            $.ajax({
+                url: '/Admin/PrintJobs/ChangeStatus',  // Địa chỉ controller action
+                type: 'POST',
+                data: {
+                    printJobId: printJobId,
+                    currentStatus: currentStatus  // Truyền trạng thái hiện tại
+                },
+                success: function (data) {
+                    if (data.success) {
+                        // Cập nhật lại trạng thái của thẻ <td> chứa Status
+                        var statusText = (data.newStatus === 0) ? 'Pending' : 'Done';
+
+                        // Cập nhật lại nội dung của thẻ <td> có data-id tương ứng cho Status
+                        $('td[data-id="' + printJobId + '"]').text(statusText);
+
+                        // Cập nhật lại EndTime nếu có
+                        var endTimeText = data.newEndTime ? new Date(data.newEndTime).toLocaleString() : 'N/A';
+
+                        // Tìm dòng chứa printJobId và cập nhật cột EndTime (thẻ <td> thứ 2 trong dòng)
+                        var row = button.closest('tr');  // Lấy dòng (row) của printJobId
+                        row.find('td:eq(6)').text(endTimeText);  // Cập nhật cột thứ 7 (EndTime) trong dòng (chỉ mục bắt đầu từ 0)
+
+                        // Cập nhật lại data-status của button để phù hợp với trạng thái mới
+                        button.data('status', data.newStatus);
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                },
+                error: function () {
+                    alert('An error occurred while changing status.');
+                }
+            });
+        });
+    });
+</script>
+
+
+
+
+
+
