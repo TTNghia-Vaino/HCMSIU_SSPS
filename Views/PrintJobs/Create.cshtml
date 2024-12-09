@@ -4,74 +4,96 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
-
-<h4>PrintJob</h4>
+<h1 class="text-center mt-4">Create Print Job</h1>
 <hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="PrintJobId" class="control-label"></label>
-                <input asp-for="PrintJobId" class="form-control" />
-                <span asp-validation-for="PrintJobId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="UserId" class="control-label"></label>
-                <select asp-for="UserId" class ="form-control" asp-items="ViewBag.UserId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="PrinterId" class="control-label"></label>
-                <select asp-for="PrinterId" class ="form-control" asp-items="ViewBag.PrinterId"></select>
-            </div>
-            <div class="form-group">
-                <label class="control-label" for="File">Upload File</label>
-                <input type="file" name="file" id="file" class="form-control" />
-                <span asp-validation-for="FileName" class="text-danger"></span>
-            </div>
 
-            <div class="form-group">
-                <label asp-for="PageCount" class="control-label"></label>
-                <input asp-for="PageCount" class="form-control" />
-                <span asp-validation-for="PageCount" class="text-danger"></span>
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Print Job Details</h4>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Create" enctype="multipart/form-data">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="form-group">
+                            <label asp-for="PrintJobId" class="control-label"></label>
+                            <input asp-for="PrintJobId" class="form-control" />
+                            <span asp-validation-for="PrintJobId" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="UserId" class="control-label"></label>
+                            <select asp-for="UserId" class="form-control" asp-items="ViewBag.UserId"></select>
+                            <span asp-validation-for="UserId" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="PrinterId" class="control-label"></label>
+                            <select asp-for="PrinterId" class="form-control" asp-items="ViewBag.PrinterId"></select>
+                            <span asp-validation-for="PrinterId" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label" for="File">Upload File</label>
+                            <input type="file" name="file" id="file" class="form-control" />
+                            <span class="text-danger" asp-validation-for="FileName"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="PageCount" class="control-label"></label>
+                                    <input asp-for="PageCount" class="form-control" />
+                                    <span asp-validation-for="PageCount" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="IsDoubleSided" class="control-label"></label>
+                                    <select asp-for="IsDoubleSided" class="form-control">
+                                        <option value="true">Yes</option>
+                                        <option value="false">No</option>
+                                    </select>
+                                    <span asp-validation-for="IsDoubleSided" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="Copies" class="control-label"></label>
+                                    <input asp-for="Copies" class="form-control" />
+                                    <span asp-validation-for="Copies" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="TotalPages" class="control-label"></label>
+                                    <input asp-for="TotalPages" class="form-control" />
+                                    <span asp-validation-for="TotalPages" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group d-flex justify-content-between mt-4">
+                            <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                            <input type="submit" value="Create" class="btn btn-primary" />
+                        </div>
+                    </form>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="TotalPages" class="control-label"></label>
-                <input asp-for="TotalPages" class="form-control" />
-                <span asp-validation-for="TotalPages" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Copies" class="control-label"></label>
-                <input asp-for="Copies" class="form-control" />
-                <span asp-validation-for="Copies" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="IsDoubleSided" class="control-label"></label>
-                <input asp-for="IsDoubleSided" class="form-control" />
-                <span asp-validation-for="IsDoubleSided" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="StartTime" class="control-label"></label>
-                <input asp-for="StartTime" class="form-control" />
-                <span asp-validation-for="StartTime" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="EndTime" class="control-label"></label>
-                <input asp-for="EndTime" class="form-control" />
-                <span asp-validation-for="EndTime" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

@@ -1,48 +1,59 @@
 ﻿@model HCMSIU_SSPS.Models.SystemSetting
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Create System Setting";
 }
 
-<h1>Create</h1>
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Create New System Setting</h1>
 
-<h4>SystemSetting</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="SettingId" class="control-label"></label>
-                <input asp-for="SettingId" class="form-control" />
-                <span asp-validation-for="SettingId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="SettingKey" class="control-label"></label>
-                <input asp-for="SettingKey" class="form-control" />
-                <span asp-validation-for="SettingKey" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="SettingValue" class="control-label"></label>
-                <input asp-for="SettingValue" class="form-control" />
-                <span asp-validation-for="SettingValue" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="LastUpdated" class="control-label"></label>
-                <input asp-for="LastUpdated" class="form-control" />
-                <span asp-validation-for="LastUpdated" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+    <div class="card shadow-lg">
+        <div class="card-body">
+            <h4 class="card-title text-center mb-4">System Setting Information</h4>
+
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                <!-- Setting ID -->
+                <div class="form-group mb-3">
+                    <label asp-for="SettingId" class="form-label fw-bold">Setting ID</label>
+                    <input asp-for="SettingId" class="form-control" placeholder="Enter Setting ID" />
+                    <span asp-validation-for="SettingId" class="text-danger"></span>
+                </div>
+
+                <!-- Setting Key -->
+                <div class="form-group mb-3">
+                    <label asp-for="SettingKey" class="form-label fw-bold">Setting Key</label>
+                    <input asp-for="SettingKey" class="form-control" placeholder="Enter Setting Key" />
+                    <span asp-validation-for="SettingKey" class="text-danger"></span>
+                </div>
+
+                <!-- Setting Value -->
+                <div class="form-group mb-3">
+                    <label asp-for="SettingValue" class="form-label fw-bold">Setting Value</label>
+                    <textarea asp-for="SettingValue" class="form-control" placeholder="Enter Setting Value" rows="3"></textarea>
+                    <span asp-validation-for="SettingValue" class="text-danger"></span>
+                </div>
+
+                <!-- Last Updated -->
+                <div class="form-group mb-3">
+                    <label asp-for="LastUpdated" class="form-label fw-bold">Last Updated</label>
+                    <input asp-for="LastUpdated" type="datetime-local" class="form-control" />
+                    <span asp-validation-for="LastUpdated" class="text-danger"></span>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-primary px-5">Create</button>
+                    <a asp-action="Index" class="btn btn-secondary px-5 ms-3">Cancel</a>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

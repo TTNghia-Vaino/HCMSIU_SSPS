@@ -1,59 +1,45 @@
 ﻿@model IEnumerable<HCMSIU_SSPS.Models.Printer>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Printers";
 }
 
-<h1>Index</h1>
+<h1 class="text-center mt-4 mb-5">Printers List</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.PrinterName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Brand)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Model)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Location)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IsEnable)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.PrinterName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Brand)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Model)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Location)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsEnable)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.PrinterId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.PrinterId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.PrinterId">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<div class="container">
+    <div class="d-flex justify-content-between mb-4">
+        <a asp-action="Create" class="btn btn-success">Create New Printer</a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+            <thead class="thead-dark">
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.PrinterName)</th>
+                    <th>@Html.DisplayNameFor(model => model.Brand)</th>
+                    <th>@Html.DisplayNameFor(model => model.Model)</th>
+                    <th>@Html.DisplayNameFor(model => model.Location)</th>
+                    <th>@Html.DisplayNameFor(model => model.IsEnable)</th>
+                    <th class="text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@Html.DisplayFor(modelItem => item.PrinterName)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Brand)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Model)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Location)</td>
+                        <td>@Html.DisplayFor(modelItem => item.IsEnable)</td>
+                        <td class="text-center">
+                            <a asp-action="Edit" asp-route-id="@item.PrinterId" class="btn btn-warning btn-sm">Edit</a>
+                            <a asp-action="Details" asp-route-id="@item.PrinterId" class="btn btn-info btn-sm">Details</a>
+                            <a asp-action="Delete" asp-route-id="@item.PrinterId" class="btn btn-danger btn-sm">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

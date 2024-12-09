@@ -1,47 +1,41 @@
 ﻿@model IEnumerable<HCMSIU_SSPS.Models.SystemSetting>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "System Settings";
 }
 
-<h1>Index</h1>
+<h1 class="text-center mt-4 mb-5">System Settings</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.SettingKey)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.SettingValue)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.LastUpdated)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.SettingKey)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.SettingValue)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LastUpdated)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.SettingId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.SettingId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.SettingId">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<div class="container">
+    <div class="d-flex justify-content-between mb-4">
+        <a asp-action="Create" class="btn btn-success">Create New Setting</a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+            <thead class="thead-dark">
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.SettingKey)</th>
+                    <th>@Html.DisplayNameFor(model => model.SettingValue)</th>
+                    <th>@Html.DisplayNameFor(model => model.LastUpdated)</th>
+                    <th class="text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@Html.DisplayFor(modelItem => item.SettingKey)</td>
+                        <td>@Html.DisplayFor(modelItem => item.SettingValue)</td>
+                        <td>@item.LastUpdated?.ToString("g")</td>
+                        <td class="text-center">
+                            <a asp-action="Edit" asp-route-id="@item.SettingId" class="btn btn-warning btn-sm">Edit</a>
+                            <a asp-action="Details" asp-route-id="@item.SettingId" class="btn btn-info btn-sm">Details</a>
+                            <a asp-action="Delete" asp-route-id="@item.SettingId" class="btn btn-danger btn-sm">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
