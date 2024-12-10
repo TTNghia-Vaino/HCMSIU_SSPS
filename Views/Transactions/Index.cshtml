@@ -28,7 +28,7 @@
                         <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Description)</th>
                         <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Timestamp)</th>
                         <th>@Html.DisplayNameFor(model => model.FirstOrDefault().User)</th>
-                        <th>Actions</th>
+                        
                     </tr>
                 </thead>
                 <tbody>
@@ -41,9 +41,7 @@
                             <td>@Html.DisplayFor(modelItem => item.Timestamp)</td>
                             <td>@Html.DisplayFor(modelItem => item.User.UserId)</td>
                             <td>
-                                <a asp-action="Edit" asp-route-id="@item.TransactionId" class="btn btn-sm btn-warning">Edit</a>
-                                <a asp-action="Details" asp-route-id="@item.TransactionId" class="btn btn-sm btn-info">Details</a>
-                                <a asp-action="Delete" asp-route-id="@item.TransactionId" class="btn btn-sm btn-danger">Delete</a>
+                                
                             </td>
                         </tr>
                     }

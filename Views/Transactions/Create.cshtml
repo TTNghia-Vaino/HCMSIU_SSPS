@@ -11,52 +11,65 @@
 
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">Transaction Information</h5>
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white text-center py-3">
+                    <h5 class="mb-0 fw-bold">Transaction Information</h5>
                 </div>
                 <div class="card-body">
                     <form asp-action="Create">
-                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-3" role="alert"></div>
 
-                        <div class="form-group">
-                            <label asp-for="TransactionId" class="control-label">Transaction ID</label>
-                            <input asp-for="TransactionId" class="form-control" />
+                        <div class="form-group mb-3">
+                            <label asp-for="TransactionId" class="form-label fw-bold">Transaction ID</label>
+                            <input asp-for="TransactionId" class="form-control" placeholder="Enter Transaction ID" />
                             <span asp-validation-for="TransactionId" class="text-danger"></span>
                         </div>
 
-                        <div class="form-group">
-                            <label asp-for="UserId" class="control-label">User</label>
-                            <select asp-for="UserId" class="form-control" asp-items="ViewBag.UserId"></select>
+                        <div class="form-group mb-3">
+                            <label asp-for="UserId" class="form-label fw-bold">User</label>
+                            <select asp-for="UserId" class="form-select" asp-items="ViewBag.UserId"></select>
                         </div>
 
-                        <div class="form-group">
-                            <label asp-for="Amount" class="control-label">Amount</label>
-                            <input asp-for="Amount" class="form-control" />
+                        <div class="form-group mb-3">
+                            <label asp-for="Amount" class="form-label fw-bold">Amount</label>
+                            <input asp-for="Amount" class="form-control" placeholder="e.g., 100.00" />
                             <span asp-validation-for="Amount" class="text-danger"></span>
                         </div>
 
-                        <div class="form-group">
-                            <label asp-for="Status" class="control-label">Status</label>
-                            <input asp-for="Status" class="form-control" />
+                        <div class="form-group mb-3">
+                            <label asp-for="Status" class="form-label fw-bold">Status</label>
+                            <input asp-for="Status" class="form-control" placeholder="e.g., Pending" />
                             <span asp-validation-for="Status" class="text-danger"></span>
                         </div>
 
-                        <div class="form-group">
-                            <label asp-for="Description" class="control-label">Description</label>
-                            <input asp-for="Description" class="form-control" />
+                        <div class="form-group mb-3">
+                            <label asp-for="Description" class="form-label fw-bold">Description</label>
+                            <input asp-for="Description" class="form-control" placeholder="Optional description" />
                             <span asp-validation-for="Description" class="text-danger"></span>
                         </div>
 
-                        <div class="form-group">
-                            <label asp-for="Timestamp" class="control-label">Timestamp</label>
-                            <input asp-for="Timestamp" class="form-control" />
+                        <div class="form-group mb-3">
+                            <label asp-for="Timestamp" class="form-label fw-bold">Timestamp</label>
+                            <input asp-for="Timestamp" class="form-control" placeholder="e.g., 2024-12-10 12:00:00" />
                             <span asp-validation-for="Timestamp" class="text-danger"></span>
                         </div>
 
-                        <div class="form-group d-flex justify-content-between mt-4">
-                            <a asp-action="Index" class="btn btn-secondary">Back to List</a>
-                            <input type="submit" value="Create" class="btn btn-primary" />
+                        <!-- QR Code Section -->
+                        <div class="form-group mb-4">
+                            <label class="form-label fw-bold">Payment QR Code</label>
+                            <div class="d-flex align-items-center justify-content-center py-3">
+                                <img id="qrCode" class="shadow-sm border rounded p-2" alt="QR Code"
+                                     src="https://i.imgur.com/yiorE6W.png/v1/create-qr-code/?data=Payment%20Info&size=200x200" />
+                            </div>
+                            <small class="form-text text-muted text-center">
+                                Please scan the code to pay.
+                            </small>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="d-flex justify-content-between mt-4">
+                            <a asp-action="Index" class="btn btn-secondary px-4">Back to List</a>
+                            <button type="submit" class="btn btn-primary px-4">Create</button>
                         </div>
                     </form>
                 </div>
@@ -65,8 +78,3 @@
     </div>
 </div>
 
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-}

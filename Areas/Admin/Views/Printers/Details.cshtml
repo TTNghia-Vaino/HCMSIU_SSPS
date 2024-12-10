@@ -1,56 +1,51 @@
 ﻿@model HCMSIU_SSPS.Models.Printer
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Printer Details";
 }
 
-<h1>Details</h1>
+<h1 class="text-center mt-4">Printer Details</h1>
 
-<div>
-    <h4>Printer</h4>
+<div class="container mt-4">
     <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PrinterName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PrinterName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Brand)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Brand)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Model)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Model)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Location)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Location)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IsEnable)
-        </dt>
-        <dd class="col-sm-10">
-            @if (Model.IsEnable == 1)
-            {
-                @:Yes
-            }
-            else
-            {
-                @:No
-            }
-        </dd>
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white text-center py-3">
+                    <h5 class="mb-0 fw-bold">Details of Printer</h5>
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-4 fw-bold">Printer Name:</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.PrinterName)</dd>
 
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.PrinterId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+                        <dt class="col-sm-4 fw-bold">Brand:</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.Brand)</dd>
+
+                        <dt class="col-sm-4 fw-bold">Model:</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.Model)</dd>
+
+                        <dt class="col-sm-4 fw-bold">Location:</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.Location)</dd>
+
+                        <dt class="col-sm-4 fw-bold">Enabled:</dt>
+                        <dd class="col-sm-8">
+                            @if (Model.IsEnable == 1)
+                            {
+                                <span class="badge bg-success">Yes</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">No</span>
+                            }
+                        </dd>
+                    </dl>
+                </div>
+                <div class="card-footer d-flex justify-content-between">
+                    <a asp-action="Edit" asp-route-id="@Model?.PrinterId" class="btn btn-warning">Edit</a>
+                    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

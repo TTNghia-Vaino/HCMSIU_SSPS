@@ -4,33 +4,28 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<h1 class="text-center mt-4">System Setting Details</h1>
 
-<div>
-    <h4>SystemSetting</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SettingKey)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SettingKey)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SettingValue)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SettingValue)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.LastUpdated)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.LastUpdated)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.SettingId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">System Setting Information</h5>
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">Setting Key</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.SettingKey)</dd>
+
+                <dt class="col-sm-3">Setting Value</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.SettingValue)</dd>
+
+                <dt class="col-sm-3">Last Updated</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.LastUpdated)</dd>
+            </dl>
+        </div>
+        <div class="card-footer text-center">
+            <a asp-action="Edit" asp-route-id="@Model?.SettingId" class="btn btn-warning me-2">Edit</a>
+            <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+        </div>
+    </div>
 </div>
