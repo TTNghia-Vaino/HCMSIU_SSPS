@@ -92,7 +92,7 @@ namespace HCMSIU_SSPS.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-
+            systemSetting.LastUpdated = DateTime.Now;
             if (ModelState.IsValid)
             {
                 try

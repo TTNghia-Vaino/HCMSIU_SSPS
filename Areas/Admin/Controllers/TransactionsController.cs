@@ -45,29 +45,11 @@ namespace HCMSIU_SSPS.Areas.Admin.Controllers
             return View(transaction);
         }
 
-        // GET: Admin/Transactions/Create
-        public IActionResult Create()
-        {
-            ViewData["UserId"] = new SelectList(_context.Users, "UserId", "UserId");
-            return View();
-        }
+
 
         // POST: Admin/Transactions/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("TransactionId,UserId,Amount,Status,Description,Timestamp")] Transaction transaction)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(transaction);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["UserId"] = new SelectList(_context.Users, "UserId", "UserId", transaction.UserId);
-            return View(transaction);
-        }
 
         // GET: Admin/Transactions/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -82,9 +64,24 @@ namespace HCMSIU_SSPS.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-            ViewData["UserId"] = new SelectList(_context.Users, "UserId", "UserId", transaction.UserId);
+
+            // Lấy thông tin User liên quan
+            var user = await _context.Users
+                .Where(u => u.UserId == transaction.UserId)
+                .Select(u => new { u.UserId, u.UserName })
+                .FirstOrDefaultAsync();
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            ViewData["UserName"] = user.UserName;
+            ViewData["UserId"] = user.UserId;
+
             return View(transaction);
         }
+
 
         // POST: Admin/Transactions/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
@@ -97,7 +94,7 @@ namespace HCMSIU_SSPS.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-
+            transaction.Timestamp = DateTime.Now;
             if (ModelState.IsValid)
             {
                 try
