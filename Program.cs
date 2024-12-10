@@ -1,12 +1,25 @@
 ﻿using HCMSIU_SSPS.Models;
 using HCMSIU_SSPS.Services;
+using Microsoft.AspNetCore.Http.Features;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
 builder.Services.AddDbContext<HcmsiuSspsContext>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+
+// Cấu hình giới hạn tải file
+builder.Services.Configure<IISServerOptions>(options =>
+{
+    options.MaxRequestBodySize = 100 * 1024 * 1024; // Giới hạn dung lượng file là 100MB
+});
+
+builder.Services.Configure<FormOptions>(options =>
+{
+    options.MultipartBodyLengthLimit = 100 * 1024 * 1024; // Giới hạn dung lượng file là 100MB
+});
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {

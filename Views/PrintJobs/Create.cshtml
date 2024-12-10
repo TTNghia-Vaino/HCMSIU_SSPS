@@ -17,30 +17,30 @@
                 <div class="card-body">
                     <form asp-action="Create" enctype="multipart/form-data">
                         <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
-
-                        <div class="form-group">
-                            <label asp-for="PrintJobId" class="control-label"></label>
-                            <input asp-for="PrintJobId" class="form-control" />
-                            <span asp-validation-for="PrintJobId" class="text-danger"></span>
-                        </div>
-
-                        <div class="form-group">
-                            <label asp-for="UserId" class="control-label"></label>
-                            <select asp-for="UserId" class="form-control" asp-items="ViewBag.UserId"></select>
-                            <span asp-validation-for="UserId" class="text-danger"></span>
-                        </div>
+                        
+                        <!--Search trong database cho PrintJobId với PrintJobId với là +1 index so với cái cũ đã tồn tại trong hệ thống-->
+                        <!--Hiden input cho UserName có UserId trong hệ thống với UserName lấy từ context http session-->
+                        <input type="hidden" name="UserId" value="@ViewBag.UserId" />
 
                         <div class="form-group">
                             <label asp-for="PrinterId" class="control-label"></label>
+                            <!-- Sử dụng ViewBag để truyền danh sách Printer vào dropdown -->
                             <select asp-for="PrinterId" class="form-control" asp-items="ViewBag.PrinterId"></select>
                             <span asp-validation-for="PrinterId" class="text-danger"></span>
                         </div>
 
+
+                        <!--Truyền file vào, tạo file trong hệ thống trong folder upload, sau đó lấy file tên cho filename-->
                         <div class="form-group">
                             <label class="control-label" for="File">Upload File</label>
-                            <input type="file" name="file" id="file" class="form-control" />
+                            <input type="file" name="file" class="form-control" />
                             <span class="text-danger" asp-validation-for="FileName"></span>
-                        </div>
+                        </div> 
+                        @* <div class="form-group">
+                            <label class="control-label" for="FileName">File Name</label>
+                            <input type="text" name="FileName" id="FileName" class="form-control" />
+                            <span class="text-danger" asp-validation-for="FileName"></span>
+                        </div> *@
 
                         <div class="row">
                             <div class="col-md-6">
@@ -59,6 +59,16 @@
                                         <option value="false">No</option>
                                     </select>
                                     <span asp-validation-for="IsDoubleSided" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="IsA3" class="control-label"></label>
+                                    <select asp-for="IsA3" class="form-control">
+                                        <option value="true">Yes</option>
+                                        <option value="false">No</option>
+                                    </select>
+                                    <span asp-validation-for="IsA3" class="text-danger"></span>
                                 </div>
                             </div>
                         </div>
@@ -91,6 +101,8 @@
         </div>
     </div>
 </div>
+
+
 
 @section Scripts {
     @{

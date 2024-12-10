@@ -27,6 +27,8 @@ public partial class PrintJob
 
     public int? Status { get; set; }
 
+    public bool? IsA3 { get; set; }
+
     public virtual Printer? Printer { get; set; }
 
     public virtual User? User { get; set; }

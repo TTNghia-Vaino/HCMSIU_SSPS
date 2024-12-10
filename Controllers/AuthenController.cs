@@ -42,6 +42,19 @@ namespace HCMSIU_SSPS.Controllers
                 return RedirectToAction("Index", "Home"); // trả lại cái modal pop up login
             }
         }
+        [HttpPost]
+        public IActionResult Logout()
+        {
+            // Xóa thông tin người dùng khỏi session
+            HttpContext.Session.Remove("UserName");
+            HttpContext.Session.Remove("Role");
+
+            // Thông báo đăng xuất thành công
+            TempData["LogoutSuccess"] = "Đăng xuất thành công.";
+
+            // Chuyển hướng về trang chủ (hoặc trang đăng nhập nếu bạn muốn)
+            return RedirectToAction("Index", "Authen");
+        }
 
         // POST: Authen/ForgotPassword
         [HttpPost]

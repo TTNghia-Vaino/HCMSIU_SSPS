@@ -42,6 +42,9 @@ public partial class HcmsiuSspsContext : DbContext
             entity.Property(e => e.FileName)
                 .HasMaxLength(255)
                 .IsUnicode(false);
+            entity.Property(e => e.IsA3)
+                .HasDefaultValue(false)
+                .HasColumnName("isA3");
             entity.Property(e => e.PrinterId).HasColumnName("PrinterID");
             entity.Property(e => e.StartTime).HasColumnType("datetime");
             entity.Property(e => e.Status).HasDefaultValue(0);

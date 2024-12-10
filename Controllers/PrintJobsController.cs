@@ -12,10 +12,11 @@ namespace HCMSIU_SSPS.Controllers
     public class PrintJobsController : Controller
     {
         private readonly HcmsiuSspsContext _context;
-
-        public PrintJobsController(HcmsiuSspsContext context)
+        private readonly IWebHostEnvironment _webHost;
+        public PrintJobsController(HcmsiuSspsContext context, IWebHostEnvironment webHost)
         {
             _context = context;
+            _webHost = webHost;
         }
 
         // GET: PrintJobs
@@ -52,8 +53,21 @@ namespace HCMSIU_SSPS.Controllers
         // GET: PrintJobs/Create
         public IActionResult Create()
         {
-            ViewData["PrinterId"] = new SelectList(_context.Printers, "PrinterId", "PrinterId");
-            ViewData["UserId"] = new SelectList(_context.Users, "UserId", "UserId");
+            var username = HttpContext.Session.GetString("UserName");
+            // Kiểm tra nếu username không null
+            if (username != null)
+            {
+                // Tìm UserId từ bảng Users
+                var userId = _context.Users
+                                     .Where(u => u.UserName == username)
+                                     .Select(u => u.UserId)
+                                     .FirstOrDefault();
+
+                // Truyền userId vào ViewBag
+                ViewBag.UserId = userId;
+            }
+
+            ViewBag.PrinterId = new SelectList(_context.Printers, "PrinterId", "PrinterName");
             return View();
         }
 
@@ -62,8 +76,9 @@ namespace HCMSIU_SSPS.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("PrintJobId,UserId,PrinterId,PageCount,TotalPages,Copies,IsDoubleSided,StartTime,EndTime")] PrintJob printJob, IFormFile file)
+        public async Task<IActionResult> Create([Bind("PrintJobId,UserId,PrinterId,PageCount,TotalPages,Copies, IsA3,IsDoubleSided,StartTime,EndTime")] PrintJob printJob, IFormFile file)
         {
+
             if (ModelState.IsValid)
             {
                 if (file != null && file.Length > 0)
