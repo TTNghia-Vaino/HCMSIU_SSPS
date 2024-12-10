@@ -83,6 +83,7 @@ namespace HCMSIU_SSPS.Controllers
             {
                 if (file != null && file.Length > 0)
                 {
+                    var FileName = file.FileName;
                     // Đường dẫn lưu file
                     var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads", file.FileName);
 
@@ -102,9 +103,22 @@ namespace HCMSIU_SSPS.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["PrinterId"] = new SelectList(_context.Printers, "PrinterId", "PrinterId", printJob.PrinterId);
-            ViewData["UserId"] = new SelectList(_context.Users, "UserId", "UserId", printJob.UserId);
-            return View(printJob);
+            var username = HttpContext.Session.GetString("UserName");
+            // Kiểm tra nếu username không null
+            if (username != null)
+            {
+                // Tìm UserId từ bảng Users
+                var userId = _context.Users
+                                     .Where(u => u.UserName == username)
+                                     .Select(u => u.UserId)
+                                     .FirstOrDefault();
+
+                // Truyền userId vào ViewBag
+                ViewBag.UserId = userId;
+            }
+
+            ViewBag.PrinterId = new SelectList(_context.Printers, "PrinterId", "PrinterName");
+            return View();
         }
 
 
