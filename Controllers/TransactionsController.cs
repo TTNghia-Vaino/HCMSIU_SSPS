@@ -21,8 +21,12 @@ namespace HCMSIU_SSPS.Controllers
         // GET: Transactions
         public async Task<IActionResult> Index()
         {
-            var hcmsiuSspsContext = _context.Transactions.Include(t => t.User);
-            return View(await hcmsiuSspsContext.ToListAsync());
+            var username = HttpContext.Session.GetString("UserName");
+            var filtered = _context.Transactions
+                        .Include(p => p.User)
+                        .Where(p => p.User.UserName == username);
+
+            return View(await filtered.ToListAsync());
         }
 
         // GET: Transactions/Details/5
@@ -47,7 +51,19 @@ namespace HCMSIU_SSPS.Controllers
         // GET: Transactions/Create
         public IActionResult Create()
         {
-            ViewData["UserId"] = new SelectList(_context.Users, "UserId", "UserId");
+            var username = HttpContext.Session.GetString("UserName");
+            // Kiểm tra nếu username không null
+            if (username != null)
+            {
+                // Tìm UserId từ bảng Users
+                var userId = _context.Users
+                                     .Where(u => u.UserName == username)
+                                     .Select(u => u.UserId)
+                                     .FirstOrDefault();
+
+                // Truyền userId vào ViewBag
+                ViewBag.UserId = userId;
+            }
             return View();
         }
 
@@ -58,6 +74,9 @@ namespace HCMSIU_SSPS.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("TransactionId,UserId,Amount,Status,Description,Timestamp")] Transaction transaction)
         {
+            transaction.Status = 0;
+            transaction.Timestamp = DateTime.Now;
+            transaction.TransactionId = GenerateUniquePrintJobId(); 
             if (ModelState.IsValid)
             {
                 _context.Add(transaction);
@@ -66,6 +85,32 @@ namespace HCMSIU_SSPS.Controllers
             }
             ViewData["UserId"] = new SelectList(_context.Users, "UserId", "UserId", transaction.UserId);
             return View(transaction);
+        }
+        private int GenerateUniquePrintJobId()
+        {
+            Random random = new Random();
+            int newId;
+
+            do
+            {
+                // Tạo một số ngẫu nhiên
+                newId = random.Next(100000, 999999); // Bạn có thể thay đổi phạm vi nếu muốn
+
+            } while (_context.Transactions.Any(p => p.TransactionId == newId)); // Kiểm tra nếu đã có PrintJobId trong database
+
+            return newId;
+        }
+        public async Task<IActionResult> GetRate()
+        {
+            var setting = await _context.SystemSettings
+                                        .FirstOrDefaultAsync(s => s.SettingId == 4);
+
+            if (setting != null)
+            {
+                return Json(new { rate = setting.SettingValue  }); // Trả về giá trị rate từ bảng SystemSettings
+            }
+
+            return Json(new { rate = 0 }); // Nếu không tìm thấy, trả về 0
         }
 
         // GET: Transactions/Edit/5

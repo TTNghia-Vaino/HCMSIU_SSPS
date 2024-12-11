@@ -130,6 +130,12 @@
 </head>
 
 <body>
+    @if (Context.Session.GetString("Role") != "1")
+    {
+        <script>
+            window.location.href = '@Url.Action("Index", "Home", new { area = "" })';
+        </script>
+    }
     <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
         <button class="close-btn" id="closeSidebar">&times;</button>

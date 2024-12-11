@@ -10,9 +10,31 @@
 
 
 <h1 class="text-center mt-4 mb-5">Print Jobs List</h1>
-
+<!--Tạo 1 ajax cho phép select từ ngày A tới ngày B, theo ngày, theo tháng, theo năm được chọn, nếu là tháng mặc định A là đầu tháng, B là cuối tháng, theo năm A là 1/1 của năm B là 31/12 của năm-->
 <div class="container">
-
+    <div class="mb-4">
+        <label for="dateType">Filter By:</label>
+        <select id="dateType" class="form-control">
+            <option value="day">Day</option>
+            <option value="month">Month</option>
+            <option value="year">Year</option>
+        </select>
+        <div id="dateFilter">
+            <label for="startDate">From:</label>
+            <input type="date" id="startDate" class="form-control" />
+            <label for="endDate">To:</label>
+            <input type="date" id="endDate" class="form-control" />
+        </div>
+        <div id="monthFilter" class="d-none">
+            <label for="month">Select Month:</label>
+            <input type="month" id="month" class="form-control" />
+        </div>
+        <div id="yearFilter" class="d-none">
+            <label for="year">Select Year:</label>
+            <input type="number" id="year" class="form-control" min="2000" max="2100" />
+        </div>
+        <button id="filterBtn" class="btn btn-primary mt-3">Filter</button>
+    </div>
     <div class="table-responsive">
         <table class="table table-bordered table-striped">
             <thead class="thead-dark">
@@ -114,7 +136,65 @@
         });
     });
 </script>
+<script>
+    $(document).ready(function () {
+        $('#dateType').change(function () {
+            const type = $(this).val();
+            $('#dateFilter, #monthFilter, #yearFilter').addClass('d-none');
+            if (type === 'day') {
+                $('#dateFilter').removeClass('d-none');
+            } else if (type === 'month') {
+                $('#monthFilter').removeClass('d-none');
+            } else if (type === 'year') {
+                $('#yearFilter').removeClass('d-none');
+            }
+        });
 
+        $('#filterBtn').click(function () {
+            const type = $('#dateType').val();
+            let data = {};
+
+            if (type === 'day') {
+                data = {
+                    type: 'day',
+                    startDate: $('#startDate').val(),
+                    endDate: $('#endDate').val(),
+                };
+            } else if (type === 'month') {
+                const month = $('#month').val();
+                const [year, m] = month.split('-');
+                data = {
+                    type: 'month',
+                    startDate: `${year}-${m}-01`,
+                    endDate: `${year}-${m}-31`,
+                };
+            } else if (type === 'year') {
+                const year = $('#year').val();
+                data = {
+                    type: 'year',
+                    startDate: `${year}-01-01`,
+                    endDate: `${year}-12-31`,
+                };
+            }
+
+            $.ajax({
+                url: '/Admin/PrintJobs/FilterByDate',
+                type: 'POST',
+                data: JSON.stringify(data),
+                contentType: 'application/json',
+                success: function (response) {
+                    // Replace the table body with new data
+                    $('tbody').html(response);
+                },
+                error: function () {
+                    alert('Error while filtering data.');
+                }
+            });
+        });
+    });
+
+
+</script>
 
 
 

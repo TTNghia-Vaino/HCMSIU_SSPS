@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "Create";
 }
-
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <h1 class="text-center mt-4">Create Transaction</h1>
 
 <div class="container mt-4">
@@ -19,28 +19,15 @@
                     <form asp-action="Create">
                         <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-3" role="alert"></div>
 
-                        <div class="form-group mb-3">
-                            <label asp-for="TransactionId" class="form-label fw-bold">Transaction ID</label>
-                            <input asp-for="TransactionId" class="form-control" placeholder="Enter Transaction ID" />
-                            <span asp-validation-for="TransactionId" class="text-danger"></span>
-                        </div>
+                        <input type="hidden" name="UserId" value="@ViewBag.UserId" />
 
-                        <div class="form-group mb-3">
-                            <label asp-for="UserId" class="form-label fw-bold">User</label>
-                            <select asp-for="UserId" class="form-select" asp-items="ViewBag.UserId"></select>
-                        </div>
-
+                        <!--Viết ajax về table SystemSettings tìm tới settingsid = 4 và lấy 1 biến rate = settings value, biến rate này nhân với amount cho ra 1 đoạn text kế bên, Tổng giá: amount * rate -->
                         <div class="form-group mb-3">
                             <label asp-for="Amount" class="form-label fw-bold">Amount</label>
-                            <input asp-for="Amount" class="form-control" placeholder="e.g., 100.00" />
+                            <input id="Amount" asp-for="Amount" class="form-control" placeholder="e.g., 100.00" />
                             <span asp-validation-for="Amount" class="text-danger"></span>
                         </div>
 
-                        <div class="form-group mb-3">
-                            <label asp-for="Status" class="form-label fw-bold">Status</label>
-                            <input asp-for="Status" class="form-control" placeholder="e.g., Pending" />
-                            <span asp-validation-for="Status" class="text-danger"></span>
-                        </div>
 
                         <div class="form-group mb-3">
                             <label asp-for="Description" class="form-label fw-bold">Description</label>
@@ -49,9 +36,8 @@
                         </div>
 
                         <div class="form-group mb-3">
-                            <label asp-for="Timestamp" class="form-label fw-bold">Timestamp</label>
-                            <input asp-for="Timestamp" class="form-control" placeholder="e.g., 2024-12-10 12:00:00" />
-                            <span asp-validation-for="Timestamp" class="text-danger"></span>
+                            <label class="form-label fw-bold">Total Price</label>
+                            <span id="totalPriceText" >0</span> <!-- Hiển thị kết quả tính toán -->
                         </div>
 
                         <!-- QR Code Section -->
@@ -69,6 +55,7 @@
                         <!-- Buttons -->
                         <div class="d-flex justify-content-between mt-4">
                             <a asp-action="Index" class="btn btn-secondary px-4">Back to List</a>
+                            <a asp-action="Index" asp-controller="Home" class="btn btn-secondary">Back to Home</a>
                             <button type="submit" class="btn btn-primary px-4">Create</button>
                         </div>
                     </form>
@@ -78,3 +65,43 @@
     </div>
 </div>
 
+<script>
+    $(document).ready(function () {
+        // Lắng nghe sự kiện thay đổi giá trị của Amount
+        $('#Amount').on('input', function () {
+            var amount = parseFloat($('#Amount').val()) || 0; // Lấy giá trị Amount, nếu không hợp lệ thì dùng 0
+
+            if (amount > 0) {
+                // Gửi yêu cầu Ajax để lấy rate
+                $.ajax({
+                    url: '/Transactions/GetRate', // Đường dẫn API lấy rate
+                    type: 'GET',
+                    success: function (response) {
+                        if (response && response.rate) {
+                            var rate = response.rate; // Rate lấy từ API
+                            var totalPrice = amount * rate; // Tính tổng giá
+
+                            // Hiển thị kết quả tổng giá
+                            $('#totalPriceText').text(totalPrice.toFixed(2)); // Hiển thị với 2 chữ số thập phân
+                        }
+                        else {
+                            console.error("Rate not found");
+                        }
+                    },
+                    error: function () {
+                        console.error("Error fetching rate.");
+                    }
+                });
+            } else {
+                $('#totalPriceText').text('0'); // Nếu Amount không hợp lệ thì hiển thị 0
+            }
+        });
+    });
+</script>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

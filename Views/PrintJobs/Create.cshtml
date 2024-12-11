@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = "Create";
 }
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <h1 class="text-center mt-4">Create Print Job</h1>
 <hr />
@@ -30,30 +31,24 @@
                         </div>
 
 
-                        <!--Truyền file vào, tạo file trong hệ thống trong folder upload, sau đó lấy file tên cho filename-->
+                        <!--Truyền file vào, sau khi submit tạo file trong hệ thống trong folder uploads, sau đó lấy file tên cho filename-->
                         <div class="form-group">
-                            <label class="control-label" for="File">Upload File</label>
-                            <input type="file" name="file" class="form-control" />
-                            <span class="text-danger" asp-validation-for="FileName"></span>
-                        </div> 
-                        @* <div class="form-group">
-                            <label class="control-label" for="FileName">File Name</label>
-                            <input type="text" name="FileName" id="FileName" class="form-control" />
-                            <span class="text-danger" asp-validation-for="FileName"></span>
-                        </div> *@
+                            <label class="control-label" for="file">Upload File</label>
+                            <input type="file" id="fileInput" name="file" class="form-control" />
+                        </div>
 
+                        <!--Sau khi tải file lên, ajax để tính PageCount, ở controller sẽ nhận diện đuôi file để đưa ra phương án hợp lý, hiện chỉ tính cho trường hợp pdf và pptx thôi-->
                         <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label asp-for="PageCount" class="control-label"></label>
-                                    <input asp-for="PageCount" class="form-control" />
-                                    <span asp-validation-for="PageCount" class="text-danger"></span>
-                                </div>
+                            <div class="form-group">
+                                <label asp-for="PageCount" class="control-label">Page Count</label>
+                                <input asp-for="PageCount" id="PageCount" class="form-control" readonly />
+                                <span asp-validation-for="PageCount" class="text-danger"></span>
                             </div>
+
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label asp-for="IsDoubleSided" class="control-label"></label>
-                                    <select asp-for="IsDoubleSided" class="form-control">
+                                    <select asp-for="IsDoubleSided" id="IsDoubleSided" class="form-control">
                                         <option value="true">Yes</option>
                                         <option value="false">No</option>
                                     </select>
@@ -63,7 +58,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label asp-for="IsA3" class="control-label"></label>
-                                    <select asp-for="IsA3" class="form-control">
+                                    <select asp-for="IsA3" id="IsA3" class="form-control">
                                         <option value="true">Yes</option>
                                         <option value="false">No</option>
                                     </select>
@@ -75,7 +70,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label asp-for="Copies" class="control-label"></label>
-                                    <input asp-for="Copies" class="form-control" />
+                                    <input asp-for="Copies" id="Copies" class="form-control" />
                                     <span asp-validation-for="Copies" class="text-danger"></span>
                                 </div>
                             </div>
@@ -83,7 +78,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label asp-for="TotalPages" class="control-label"></label>
-                                    <input asp-for="TotalPages" class="form-control" />
+                                    <input asp-for="TotalPages" id="TotalPages" class="form-control" readonly />
                                     <span asp-validation-for="TotalPages" class="text-danger"></span>
                                 </div>
                             </div>
@@ -91,7 +86,8 @@
 
                         <div class="form-group d-flex justify-content-between mt-4">
                             <a asp-action="Index" class="btn btn-secondary">Back to List</a>
-                            <input type="submit" value="Create" class="btn btn-primary" />
+                            <a asp-action="Index"  asp-controller="Home" class="btn btn-secondary">Back to Home</a>
+                            <input type="submit" id="submitButton" value="Create" class="btn btn-primary" />
                         </div>
                     </form>
                 </div>
@@ -99,6 +95,94 @@
         </div>
     </div>
 </div>
+
+<script>
+    $(document).ready(function () {
+        $('#fileInput').change(function () {
+            var fileInput = document.getElementById('fileInput');
+            var file = fileInput.files[0];
+            var formData = new FormData();
+            formData.append('file', file);
+
+            $.ajax({
+                url: '/PrintJobs/GetPageCount', // Đường dẫn tới API vừa thêm
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.success) {
+                        $('#PageCount').val(response.pageCount);
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function () {
+                    alert('Error while processing the file.');
+                }
+            });
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+        // Function to calculate total pages
+        function calculateTotalPagesAjax() {
+            // Lấy giá trị từ các trường trong form
+            const pageCount = parseInt($('#PageCount').val()) || 0; // Thêm ID PageCount nếu cần
+            const isDoubleSided = $('#IsDoubleSided').val() === "true";
+            const isA3 = $('#IsA3').val() === "true";
+            const copies = parseInt($('#Copies').val()) || 1;
+
+            // Gửi AJAX đến backend để tính TotalPages
+            $.ajax({
+                url: '/PrintJobs/CalculateTotalPages', // Đường dẫn API
+                type: 'POST',
+                data: {
+                    pageCount: pageCount,
+                    isDoubleSided: isDoubleSided,
+                    isA3: isA3,
+                    copies: copies
+                },
+                success: function (response) {
+                    // Cập nhật giá trị TotalPages
+                    $('#TotalPages').val(response.totalPages);
+
+                    // Kiểm tra PageBalance sau khi cập nhật TotalPages
+                    checkPageBalance(response.totalPages);
+                },
+                error: function () {
+                    console.error("Error calculating total pages.");
+                    $('#TotalPages').val("Error");
+                }
+            });
+        }
+
+        // Hàm kiểm tra PageBalance của người dùng
+        function checkPageBalance(totalPages) {
+            $.ajax({
+                url: '/PrintJobs/CheckPageBalance', // Đường dẫn đến API kiểm tra PageBalance
+                type: 'GET',
+                data: { totalPages: totalPages }, // Truyền totalPages tới backend
+                success: function (response) {
+                    // Nếu PageBalance đủ, cho phép submit
+                    if (response.isPageBalanceSufficient) {
+                        $('#submitButton').prop('disabled', false); // Enable nút submit
+                    } else {
+                        $('#submitButton').prop('disabled', true); // Disable nút submit
+                    }
+                },
+                error: function () {
+                    console.error("Error checking PageBalance.");
+                }
+            });
+        }
+
+        // Gắn sự kiện onchange vào các trường
+        $('#IsDoubleSided, #IsA3, #Copies').on('change input', calculateTotalPagesAjax);
+    });
+</script>
 
 
 

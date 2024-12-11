@@ -56,9 +56,15 @@ namespace HCMSIU_SSPS.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("UserId,UserName,Email,Password,Role,PageBalance")] User user)
         {
+            var settingPage = await _context.SystemSettings
+                                        .FirstOrDefaultAsync(s => s.SettingId == 1);
+            var pageBal = 0;
+            pageBal = int.Parse(settingPage.SettingValue);
+
             if (ModelState.IsValid)
             {
                 _context.Add(user);
+                user.PageBalance = pageBal;
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }

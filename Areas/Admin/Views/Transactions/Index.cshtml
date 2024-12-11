@@ -7,8 +7,6 @@
 <h1 class="text-center mt-4 mb-5">Transactions</h1>
 
 <div class="container">
-
-
     <div class="table-responsive">
         <table class="table table-bordered table-striped">
             <thead class="thead-dark">
@@ -26,12 +24,18 @@
                 {
                     <tr>
                         <td>@Html.DisplayFor(modelItem => item.Amount)</td>
-                        <td>@Html.DisplayFor(modelItem => item.Status)</td>
+                        <td data-id="@item.TransactionId" id="status-@item.TransactionId">
+                            @(item.Status == 0 ? "Pending" : (item.Status == 1 ? "Done" : "N/A"))
+                        </td>
                         <td>@Html.DisplayFor(modelItem => item.Description)</td>
                         <td>@item.Timestamp?.ToString("g")</td>
                         <td>@item.User?.UserId</td>
                         <td class="text-center">
-                            <a asp-action="Edit" asp-route-id="@item.TransactionId" class="btn btn-warning btn-sm">Edit</a>
+                            <button class="btn btn-success btn-sm changeStatusBtn"
+                                    data-id="@item.TransactionId"
+                                    data-status="@item.Status">
+                                Change Status
+                            </button>
                             <a asp-action="Details" asp-route-id="@item.TransactionId" class="btn btn-info btn-sm">Details</a>
                         </td>
                     </tr>
@@ -40,3 +44,44 @@
         </table>
     </div>
 </div>
+
+<script>
+    $(document).ready(function () {
+        // Lắng nghe sự kiện click cho tất cả các nút "Change Status"
+        $('button.changeStatusBtn').click(function () {
+            var button = $(this);  // Lấy đối tượng button đã click
+            var transactionId = button.data('id');  // Lấy transactionId từ thuộc tính data-id
+            var currentStatus = button.data('status');  // Lấy status hiện tại từ thuộc tính data-status
+
+            // Chuyển trạng thái mới (nếu 0 thì chuyển thành 1, ngược lại)
+            var newStatus = currentStatus === 0 ? 1 : 0;
+
+            // Gửi AJAX request đến controller để thay đổi trạng thái
+            $.ajax({
+                url: '/Admin/Transactions/ChangeStatus',  // Địa chỉ controller action
+                type: 'POST',
+                data: {
+                    id: transactionId,   // Truyền id của giao dịch
+                    status: currentStatus    // Truyền trạng thái mới
+                },
+                success: function (data) {
+                    if (data.success) {
+                        // Cập nhật lại trạng thái của thẻ <td> chứa Status
+                        var statusText = (newStatus === 0) ? 'Pending' : 'Done';
+
+                        // Cập nhật lại nội dung của thẻ <td> có data-id tương ứng cho Status
+                        $('#status-' + transactionId).text(statusText);
+
+                        // Cập nhật lại data-status của button để phù hợp với trạng thái mới
+                        button.data('status', newStatus);
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                },
+                error: function () {
+                    alert('An error occurred while changing status.');
+                }
+            });
+        });
+    });
+</script>

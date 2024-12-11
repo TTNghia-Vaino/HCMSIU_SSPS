@@ -15,6 +15,7 @@
     <div class="row mb-3">
         <div class="col text-right">
             <a asp-action="Create" class="btn btn-primary">Create New Transaction</a>
+            <a asp-action="Index" asp-controller="Home" class="btn btn-secondary">Back to Home</a>
         </div>
     </div>
 
@@ -27,7 +28,6 @@
                         <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Status)</th>
                         <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Description)</th>
                         <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Timestamp)</th>
-                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().User)</th>
                         
                     </tr>
                 </thead>
@@ -36,13 +36,11 @@
                     {
                         <tr>
                             <td>@Html.DisplayFor(modelItem => item.Amount)</td>
-                            <td>@Html.DisplayFor(modelItem => item.Status)</td>
+                            <td data-id="@item.Status">
+                                @(item.Status == 0 ? "Pending" : (item.Status == 1 ? "Done" : "N/A"))
+                            </td>
                             <td>@Html.DisplayFor(modelItem => item.Description)</td>
                             <td>@Html.DisplayFor(modelItem => item.Timestamp)</td>
-                            <td>@Html.DisplayFor(modelItem => item.User.UserId)</td>
-                            <td>
-                                
-                            </td>
                         </tr>
                     }
                 </tbody>

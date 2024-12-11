@@ -169,6 +169,40 @@ namespace HCMSIU_SSPS.Areas.Admin.Controllers
             // Trả về kết quả bao gồm trạng thái mới và EndTime (nếu có)
             return Json(new { success = true, newStatus = printJob.Status, newEndTime = newEndTime });
         }
+        [HttpPost]
+        [HttpPost]
+        public async Task<IActionResult> FilterByDate([FromBody] DateFilterModel filter)
+        {
+            if (filter == null)
+            {
+                return BadRequest("Filter data is required.");
+            }
+
+            //if (!DateTime.TryParse(filter.StartDate, out DateTime startDate) ||
+            //    !DateTime.TryParse(filter.EndDate, out DateTime endDate))
+            //{
+            //    return BadRequest("Invalid date format.");
+            //}
+
+            // Adjust endDate to include the entire day
+            var startDate = filter.StartDate;
+            var endDate = filter.EndDate;
+            endDate = endDate.Date.AddDays(1).AddTicks(-1);
+
+            // Query with relationships
+            var query = _context.PrintJobs
+                .Include(p => p.Printer)
+                .Include(p => p.User)
+                .Where(pj => pj.StartTime >= startDate && pj.StartTime <= endDate);
+
+            // Execute the query
+            var result = await query.ToListAsync();
+
+            // Render the partial view with the filtered data
+            return PartialView("_PrintJobsTablePartial", result);
+        }
+
+
         private bool PrintJobExists(int id)
         {
             return _context.PrintJobs.Any(e => e.PrintJobId == id);

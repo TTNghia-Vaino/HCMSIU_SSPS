@@ -26,14 +26,12 @@
 
                         <!-- Password -->
                         <dt class="col-sm-4 fw-bold">Password</dt>
-                        <dd class="col-sm-8">
-                            <span class="text-muted">****** (hidden for security)</span>
-                        </dd>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.Password)</dd>
 
                         <!-- Role -->
                         <dt class="col-sm-4 fw-bold">Role</dt>
                         <dd class="col-sm-8">
-                            @(Model.Role == 1 ? "<span class='badge bg-success'>Admin</span>" : "<span class='badge bg-secondary'>User</span>")
+                            @(Model.Role == 1 ? "Admin" : "User")
                         </dd>
 
                         <!-- PageBalance -->

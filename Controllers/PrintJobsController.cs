@@ -6,6 +6,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using HCMSIU_SSPS.Models;
+using System.Reflection.PortableExecutable;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml;
+using PdfSharp.Pdf;
+using PdfSharp.Pdf.IO;
+
 
 namespace HCMSIU_SSPS.Controllers
 {
@@ -20,8 +26,9 @@ namespace HCMSIU_SSPS.Controllers
         }
 
         // GET: PrintJobs
-        public async Task<IActionResult> Index(string username)
+        public async Task<IActionResult> Index()
         {
+            var username = HttpContext.Session.GetString("UserName");
             var filteredJobs = _context.PrintJobs
                         .Include(p => p.Printer)
                         .Include(p => p.User)
@@ -76,50 +83,194 @@ namespace HCMSIU_SSPS.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("PrintJobId,UserId,PrinterId,PageCount,TotalPages,Copies, IsA3,IsDoubleSided,StartTime,EndTime")] PrintJob printJob, IFormFile file)
+        public async Task<IActionResult> Create([Bind("PrintJobId,UserId,PrinterId,PageCount,TotalPages,Copies,IsA3,IsDoubleSided,StartTime,EndTime")] PrintJob printJob, IFormFile file)
         {
+            // Tạo ID cho PrintJob mới và gán các giá trị mặc định
+            printJob.PrintJobId = GenerateUniquePrintJobId();
+            printJob.Status = 0; // Trạng thái là chưa hoàn thành
+            printJob.StartTime = DateTime.Now;
+            printJob.EndTime = null; // Chưa có thời gian kết thúc
 
-            if (ModelState.IsValid)
+            // Kiểm tra và xử lý file tải lên
+            if (file != null && file.Length > 0)
             {
-                if (file != null && file.Length > 0)
+                var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads");
+
+                if (!Directory.Exists(uploadsFolder))
                 {
-                    var FileName = file.FileName;
-                    // Đường dẫn lưu file
-                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads", file.FileName);
-
-                    // Lưu file vào server
-                    using (var stream = new FileStream(filePath, FileMode.Create))
-                    {
-                        await file.CopyToAsync(stream);
-                    }
-
-                    // Lưu tên file vào database
-                    printJob.FileName = file.FileName;
+                    Directory.CreateDirectory(uploadsFolder);
                 }
 
-                // Lưu thông tin PrintJob vào database
-                _context.Add(printJob);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                var filePath = Path.Combine(uploadsFolder, file.FileName);
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(stream); // Lưu file vào thư mục
+                }
+
+                printJob.FileName = file.FileName;
+
+                // Lấy số trang từ file tùy thuộc vào định dạng file
+                var fileExtension = Path.GetExtension(file.FileName).ToLower();
+                switch (fileExtension)
+                {
+                    case ".pdf":
+                        printJob.PageCount = GetPdfPageCount(filePath);
+                        break;
+
+                    case ".pptx":
+                        printJob.PageCount = GetPptxSlideCount(filePath);
+                        break;
+
+                    default:
+                        ModelState.AddModelError("File", "Only PDF and PPTX files are supported.");
+                        break;
+                }
             }
 
-            var username = HttpContext.Session.GetString("UserName");
-            // Kiểm tra nếu username không null
-            if (username != null)
+            // Nếu Model không hợp lệ, trả về lỗi
+            if (!ModelState.IsValid)
             {
-                // Tìm UserId từ bảng Users
-                var userId = _context.Users
-                                     .Where(u => u.UserName == username)
-                                     .Select(u => u.UserId)
-                                     .FirstOrDefault();
+                var username = HttpContext.Session.GetString("UserName");
+                if (username != null)
+                {
+                    var userId = _context.Users
+                                         .Where(u => u.UserName == username)
+                                         .Select(u => u.UserId)
+                                         .FirstOrDefault();
+                    ViewBag.UserId = userId;
+                }
 
-                // Truyền userId vào ViewBag
-                ViewBag.UserId = userId;
+                ViewBag.PrinterId = new SelectList(_context.Printers, "PrinterId", "PrinterName");
+                return View(printJob);
             }
 
-            ViewBag.PrinterId = new SelectList(_context.Printers, "PrinterId", "PrinterName");
-            return View();
+            // Lấy thông tin người dùng từ session
+            var user = await _context.Users
+                                     .FirstOrDefaultAsync(u => u.UserName == HttpContext.Session.GetString("UserName"));
+
+            // Trừ PageBalance của người dùng
+            user.PageBalance -= printJob.TotalPages;
+
+            // Cập nhật thông tin người dùng vào cơ sở dữ liệu
+            _context.Update(user);
+            await _context.SaveChangesAsync();
+
+            // Lưu PrintJob vào database
+            _context.Add(printJob);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
+
+        [HttpGet]
+        public JsonResult CheckPageBalance(int totalPages)
+        {
+            var username = HttpContext.Session.GetString("UserName");
+            if (string.IsNullOrEmpty(username))
+            {
+                return Json(new { isPageBalanceSufficient = false });
+            }
+
+            // Tìm thông tin người dùng từ bảng Users
+            var user = _context.Users.FirstOrDefault(u => u.UserName == username);
+            if (user != null)
+            {
+                bool isSufficient = user.PageBalance >= totalPages;
+                return Json(new { isPageBalanceSufficient = isSufficient });
+            }
+
+            return Json(new { isPageBalanceSufficient = false });
+        }
+        private int GenerateUniquePrintJobId()
+        {
+            Random random = new Random();
+            int newId;
+
+            do
+            {
+                // Tạo một số ngẫu nhiên
+                newId = random.Next(100000, 999999); // Bạn có thể thay đổi phạm vi nếu muốn
+
+            } while (_context.PrintJobs.Any(p => p.PrintJobId == newId)); // Kiểm tra nếu đã có PrintJobId trong database
+
+            return newId;
+        }
+        [HttpPost]
+        public JsonResult GetPageCount(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                return Json(new { success = false, message = "No file uploaded." });
+            }
+
+            try
+            {
+                // Lưu file tạm thời để xử lý
+                var tempFilePath = Path.GetTempFileName();
+                using (var stream = new FileStream(tempFilePath, FileMode.Create))
+                {
+                    file.CopyTo(stream);
+                }
+
+                int pageCount = 0;
+
+                // Kiểm tra loại file
+                var extension = Path.GetExtension(file.FileName).ToLower();
+                if (extension == ".pdf")
+                {
+                    pageCount = GetPdfPageCount(tempFilePath);
+                }
+                else if (extension == ".pptx")
+                {
+                    pageCount = GetPptxSlideCount(tempFilePath);
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Unsupported file type. Please upload PDF or PPTX." });
+                }
+
+                // Xóa file tạm sau khi xử lý
+                if (System.IO.File.Exists(tempFilePath))
+                {
+                    System.IO.File.Delete(tempFilePath);
+                }
+
+                return Json(new { success = true, pageCount });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        private int GetPdfPageCount(string pdfFilePath)
+        {
+            // Logic để tính số trang PDF (có thể dùng thư viện PdfSharp hoặc iTextSharp)
+            using (var document = PdfReader.Open(pdfFilePath, PdfDocumentOpenMode.ReadOnly))
+            {
+                return document.PageCount;
+            }
+        }
+
+        public int GetPptxSlideCount(string filePath)
+        {
+            using (PresentationDocument presentation = PresentationDocument.Open(filePath, false))
+            {
+                return presentation.PresentationPart.SlideParts.Count();
+            }
+        }
+
+        [HttpPost]
+        public IActionResult CalculateTotalPages(int pageCount, bool isA3, bool isDoubleSided, int copies)
+        {
+            // Tính TotalPages bằng logic đã đề xuất
+            int actualPages = isA3 ? pageCount * 2 : pageCount;
+            int pagesToPrint = isDoubleSided ? (int)Math.Ceiling(actualPages / 2.0) : actualPages;
+            int totalPages = pagesToPrint * copies;
+
+            return Json(new { totalPages = totalPages });
+        }
+
 
 
         // GET: PrintJobs/Edit/5

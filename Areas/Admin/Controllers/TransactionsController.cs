@@ -52,6 +52,42 @@ namespace HCMSIU_SSPS.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
 
         // GET: Admin/Transactions/Edit/5
+        [HttpPost]
+        public async Task<IActionResult> ChangeStatus(int id, int status)
+        {
+            // Tìm giao dịch dựa trên id
+            var transaction = await _context.Transactions.FindAsync(id);
+
+            if (transaction == null)
+            {
+                return Json(new { success = false, message = "Transaction not found." });
+            }
+
+            // Cập nhật trạng thái của giao dịch
+            var newStatus = status == 0 ? 1 : 0;
+            transaction.Status = newStatus;
+            transaction.Timestamp = DateTime.Now;
+            var user = await _context.Users
+                                     .FirstOrDefaultAsync(u => u.UserId == transaction.UserId );
+            if (transaction.Status == 1)
+            {
+                user.PageBalance += transaction.Amount;
+            }
+            else
+            {
+                user.PageBalance -= transaction.Amount;
+            }
+            // Lưu thay đổi vào cơ sở dữ liệu
+            try
+            {
+                await _context.SaveChangesAsync();
+                return Json(new { success = true, newStatus = transaction.Status });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error updating status: " + ex.Message });
+            }
+        }
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)

@@ -9,7 +9,7 @@ public partial class Transaction
 
     public int? UserId { get; set; }
 
-    public decimal? Amount { get; set; }
+    public int? Amount { get; set; }
 
     public int? Status { get; set; }
 
