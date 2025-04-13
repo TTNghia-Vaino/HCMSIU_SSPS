@@ -27,6 +27,7 @@
                     <th>@Html.DisplayNameFor(model => model.EndTime)</th>
                     <th>@Html.DisplayNameFor(model => model.Printer)</th>
                     <th>@Html.DisplayNameFor(model => model.User)</th>
+                    <th style="width: 80px;"> @Html.DisplayNameFor(model => model.Status) </th>
                 </tr>
             </thead>
             <tbody>
@@ -42,6 +43,9 @@
                         <td>@item.EndTime?.ToString("g")</td>
                         <td>@item.Printer?.PrinterId </td>
                         <td>@item.User?.UserId </td>
+                        <td data-id="@item.PrintJobId">
+                            @(item.Status == 0 ? "Pending" : (item.Status == 1 ? "Done" : "N/A"))
+                        </td>
                     </tr>
                 }
             </tbody>
