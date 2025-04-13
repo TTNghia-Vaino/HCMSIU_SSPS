@@ -171,36 +171,36 @@ namespace HCMSIU_SSPS.Areas.Admin.Controllers
         }
         [HttpPost]
         [HttpPost]
-        public async Task<IActionResult> FilterByDate([FromBody] DateFilterModel filter)
-        {
-            if (filter == null)
-            {
-                return BadRequest("Filter data is required.");
-            }
+        //public async Task<IActionResult> FilterByDate([FromBody] DateFilterModel filter)
+        //{
+        //    if (filter == null)
+        //    {
+        //        return BadRequest("Filter data is required.");
+        //    }
 
-            //if (!DateTime.TryParse(filter.StartDate, out DateTime startDate) ||
-            //    !DateTime.TryParse(filter.EndDate, out DateTime endDate))
-            //{
-            //    return BadRequest("Invalid date format.");
-            //}
+        //    //if (!DateTime.TryParse(filter.StartDate, out DateTime startDate) ||
+        //    //    !DateTime.TryParse(filter.EndDate, out DateTime endDate))
+        //    //{
+        //    //    return BadRequest("Invalid date format.");
+        //    //}
 
-            // Adjust endDate to include the entire day
-            var startDate = filter.StartDate;
-            var endDate = filter.EndDate;
-            endDate = endDate.Date.AddDays(1).AddTicks(-1);
+        //    // Adjust endDate to include the entire day
+        //    var startDate = filter.StartDate;
+        //    var endDate = filter.EndDate;
+        //    endDate = endDate.Date.AddDays(1).AddTicks(-1);
 
-            // Query with relationships
-            var query = _context.PrintJobs
-                .Include(p => p.Printer)
-                .Include(p => p.User)
-                .Where(pj => pj.StartTime >= startDate && pj.StartTime <= endDate);
+        //    // Query with relationships
+        //    var query = _context.PrintJobs
+        //        .Include(p => p.Printer)
+        //        .Include(p => p.User)
+        //        .Where(pj => pj.StartTime >= startDate && pj.StartTime <= endDate);
 
-            // Execute the query
-            var result = await query.ToListAsync();
+        //    // Execute the query
+        //    var result = await query.ToListAsync();
 
-            // Render the partial view with the filtered data
-            return PartialView("_PrintJobsTablePartial", result);
-        }
+        //    // Render the partial view with the filtered data
+        //    return PartialView("_PrintJobsTablePartial", result);
+        //}
 
 
         private bool PrintJobExists(int id)
