@@ -4,7 +4,7 @@
     ViewData["Title"] = "Edit User";
 }
 
-<h1 class="text-center mt-4">Edit User</h1>
+<h1 class="text-center mt-4">Chỉnh Sửa Thông Tin</h1>
 
 <div class="container mt-4">
     <hr />
@@ -12,7 +12,7 @@
         <div class="col-md-6">
             <div class="card shadow-sm border-0">
                 <div class="card-header bg-primary text-white text-center py-3">
-                    <h5 class="mb-0 fw-bold">User Details</h5>
+                    <h5 class="mb-0 fw-bold">Chi Tiết Thông Tin</h5>
                 </div>
                 <div class="card-body">
                     <form asp-action="Edit">
@@ -20,7 +20,7 @@
 
                         <!-- UserName (read-only) -->
                         <div class="form-group">
-                            <label asp-for="UserName" class="control-label">Username</label>
+                            <label asp-for="UserName" class="control-label">Tên Tài Khoản</label>
                             <input asp-for="UserName" class="form-control" readonly />
                             <span asp-validation-for="UserName" class="text-danger"></span>
                         </div>
@@ -34,14 +34,14 @@
 
                         <!-- Password -->
                         <div class="form-group">
-                            <label asp-for="Password" class="control-label">Password</label>
+                            <label asp-for="Password" class="control-label">Mật Khẩu</label>
                             <input asp-for="Password" type="password" class="form-control" />
                             <span asp-validation-for="Password" class="text-danger"></span>
                         </div>
 
                         <!-- Role -->
                         <div class="form-group">
-                            <label asp-for="Role" class="control-label">Role</label>
+                            <label asp-for="Role" class="control-label">Quản Trị</label>
                             <select asp-for="Role" class="form-control">
                                 <option value="1">Admin</option>
                                 <option value="0">User</option>
@@ -51,15 +51,15 @@
 
                         <!-- Page Balance -->
                         <div class="form-group">
-                            <label asp-for="PageBalance" class="control-label">Page Balance</label>
+                            <label asp-for="PageBalance" class="control-label">Số Giấy In</label>
                             <input asp-for="PageBalance" class="form-control" />
                             <span asp-validation-for="PageBalance" class="text-danger"></span>
                         </div>
 
                         <!-- Save Button -->
                         <div class="d-flex justify-content-between mt-4">
-                            <a asp-action="Index" class="btn btn-secondary">Back to List</a>
-                            <input type="submit" value="Save" class="btn btn-primary" />
+                            <a asp-action="Index" class="btn btn-secondary">Quay Lại</a>
+                            <input type="submit" value="Lưu" class="btn btn-primary">
                         </div>
                     </form>
                 </div>

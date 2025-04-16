@@ -4,7 +4,7 @@
     ViewData["Title"] = "Create";
 }
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<h1 class="text-center mt-4">Create Transaction</h1>
+<h1 class="text-center mt-4">Thực Hiện Giao Dịch</h1>
 
 <div class="container mt-4">
     <hr />
@@ -12,10 +12,10 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card shadow-sm border-0">
-                <div class="card-header bg-primary text-white text-center py-3">
-                    <h5 class="mb-0 fw-bold">Transaction Information</h5>
+                <div class="card-header" style="background-color: #07689f; color: white;">
+                    <h5 class="mb-0 fw-bold">Thông Tin Giao Dịch</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body" style="max-height: calc(100vh - 400px); overflow-y: auto;">
                     <form asp-action="Create">
                         <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-3" role="alert"></div>
 
@@ -23,41 +23,40 @@
 
                         <!--Viết ajax về table SystemSettings tìm tới settingsid = 4 và lấy 1 biến rate = settings value, biến rate này nhân với amount cho ra 1 đoạn text kế bên, Tổng giá: amount * rate -->
                         <div class="form-group mb-3">
-                            <label asp-for="Amount" class="form-label fw-bold">Amount</label>
+                            <label asp-for="Amount" class="form-label fw-bold">Số Lượng</label>
                             <input id="Amount" asp-for="Amount" class="form-control" placeholder="e.g., 100.00" />
                             <span asp-validation-for="Amount" class="text-danger"></span>
                         </div>
 
-
                         <div class="form-group mb-3">
-                            <label asp-for="Description" class="form-label fw-bold">Description (Username + Total money + Date)</label>
-                            <input asp-for="Description" class="form-control" placeholder="Optional description" />
+                            <label asp-for="Description" class="form-label fw-bold">Nội Dung Giao Dịch (Tên người dùng + Tổng số trang)</label>
+                            <input asp-for="Description" class="form-control" placeholder="Nội Dung" />
                             <span asp-validation-for="Description" class="text-danger"></span>
                         </div>
 
                         <div class="form-group mb-3">
-                            <label class="form-label fw-bold">Total Price</label>
-                            <span id="totalPriceText" >0 </span> <span>VNĐ</span> <!-- Hiển thị kết quả tính toán --> 
+                            <label class="form-label fw-bold">Tổng: </label>
+                            <span id="totalPriceText">0 </span> <span>VNĐ</span> <!-- Hiển thị kết quả tính toán --> 
                             <!--Để VND ở cuối-->
                         </div>
 
                         <!-- QR Code Section -->
                         <div class="form-group mb-4">
-                            <label class="form-label fw-bold">Payment QR Code</label>
+                            <label class="form-label fw-bold">Mã QR thanh toán</label>
                             <div class="d-flex align-items-center justify-content-center py-3">
                                 <img id="qrCode" class="shadow-sm border rounded p-2" alt="QR Code"
                                      src="https://i.imgur.com/yiorE6W.png/v1/create-qr-code/?data=Payment%20Info&size=200x200" />
                             </div>
                             <small class="form-text text-muted text-center">
-                                Please scan the code to pay.
+                                Vui lòng quét mã để thanh toán.
                             </small>
                         </div>
 
                         <!-- Buttons -->
-                        <div class="d-flex justify-content-between mt-4">
-                            <a asp-action="Index" class="btn btn-secondary px-4">Back to List</a>
-                            <a asp-action="Index" asp-controller="Home" class="btn btn-secondary">Back to Home</a>
-                            <button type="submit" class="btn btn-primary px-4">Create</button>
+                        <div class="d-flex justify-content-between mt-4 mb-4">
+                            <a asp-action="Index" class="btn btn-secondary px-4">Lịch Sử Giao Dịch</a>
+                            <a asp-action="Index" asp-controller="Home" class="btn btn-secondary">Quay Lại</a>
+                            <button type="submit" class="btn btn-primary px-4">Tạo Mới</button>
                         </div>
                     </form>
                 </div>
@@ -99,10 +98,3 @@
         });
     });
 </script>
-
-
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-}

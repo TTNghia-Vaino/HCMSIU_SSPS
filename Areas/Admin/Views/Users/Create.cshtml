@@ -5,39 +5,39 @@
 }
 
 <div class="container mt-5">
-    <h1 class="text-center mb-4">Create New User</h1>
+    <h1 class="text-center mb-4">Thêm Tài Khoản Mới</h1>
 
     <div class="card shadow-lg">
         <div class="card-body">
-            <h4 class="card-title text-center mb-4">User Information</h4>
+            <h4 class="card-title text-center mb-4">Nhập Thông Tin Tài Khoản</h4>
 
             <form asp-action="Create">
                 <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
 
                 <!-- Username -->
                 <div class="form-group mb-3">
-                    <label asp-for="UserName" class="form-label fw-bold">Username</label>
-                    <input asp-for="UserName" class="form-control" placeholder="Enter username" />
+                    <label asp-for="UserName" class="form-label fw-bold">Tên Tài Khoản</label>
+                    <input asp-for="UserName" class="form-control" placeholder="Nhập Tên Tài Khoản" />
                     <span asp-validation-for="UserName" class="text-danger"></span>
                 </div>
 
                 <!-- Email -->
                 <div class="form-group mb-3">
                     <label asp-for="Email" class="form-label fw-bold">Email</label>
-                    <input asp-for="Email" type="email" class="form-control" placeholder="Enter email address" />
+                    <input asp-for="Email" type="email" class="form-control" placeholder="Nhập Email" />
                     <span asp-validation-for="Email" class="text-danger"></span>
                 </div>
 
                 <!-- Password -->
                 <div class="form-group mb-3">
-                    <label asp-for="Password" class="form-label fw-bold">Password</label>
-                    <input asp-for="Password" type="password" class="form-control" placeholder="Enter password" />
+                    <label asp-for="Password" class="form-label fw-bold">Mật Khẩu</label>
+                    <input asp-for="Password" type="password" class="form-control" placeholder="Nhập Mật Khẩu" />
                     <span asp-validation-for="Password" class="text-danger"></span>
                 </div>
 
                 <!-- Role -->
                 <div class="form-group mb-3">
-                    <label asp-for="Role" class="form-label fw-bold">Role</label>
+                    <label asp-for="Role" class="form-label fw-bold">Quản Trị</label>
                     <select asp-for="Role" class="form-select">
                         <option value="">Select Role</option>
                         <option value="1">Admin</option>
@@ -48,8 +48,8 @@
 
                 <!-- Submit Button -->
                 <div class="text-center mt-4">
-                    <button type="submit" class="btn btn-primary px-5">Create</button>
-                    <a asp-action="Index" class="btn btn-secondary px-5 ms-3">Cancel</a>
+                    <button type="submit" class="btn btn-primary px-5">Tạo Mới</button>
+                    <a asp-action="Index" class="btn btn-secondary px-5 ms-3">Hủy</a>
                 </div>
             </form>
         </div>

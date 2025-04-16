@@ -4,19 +4,19 @@
     ViewData["Title"] = "Transactions";
 }
 
-<h1 class="text-center mt-4 mb-5">Transactions</h1>
+<h1 class="text-center mt-4 mb-5">Lịch Sử Giao Dịch</h1>
 
 <div class="container">
     <div class="table-responsive">
         <table class="table table-bordered table-striped">
             <thead class="thead-dark">
                 <tr>
-                    <th>@Html.DisplayNameFor(model => model.Amount)</th>
-                    <th>@Html.DisplayNameFor(model => model.Status)</th>
-                    <th>@Html.DisplayNameFor(model => model.Description)</th>
-                    <th>@Html.DisplayNameFor(model => model.Timestamp)</th>
-                    <th>@Html.DisplayNameFor(model => model.User)</th>
-                    <th class="text-center">Actions</th>
+                    <th>Số Lượng</th>
+                    <th>Trạng Thái</th>
+                    <th>Nội Dung</th>
+                    <th>Thời Gian</th>
+                    <th>Tài Khoản</th>
+                    <th class="text-center">Cài Đặt</th>
                 </tr>
             </thead>
             <tbody>
@@ -34,9 +34,8 @@
                             <button class="btn btn-success btn-sm changeStatusBtn"
                                     data-id="@item.TransactionId"
                                     data-status="@item.Status">
-                                Change Status
+                                Check
                             </button>
-                            <a asp-action="Details" asp-route-id="@item.TransactionId" class="btn btn-info btn-sm">Details</a>
                         </td>
                     </tr>
                 }

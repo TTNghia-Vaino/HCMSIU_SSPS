@@ -4,23 +4,23 @@
     ViewData["Title"] = "Users List";
 }
 
-<h1 class="text-center mt-4 mb-5">Users List</h1>
+<h1 class="text-center mt-4 mb-5">Danh Sách Người Dùng</h1>
 
 <div class="container">
     <div class="d-flex justify-content-between mb-4">
-        <a asp-action="Create" class="btn btn-success">Create New User</a>
+        <a asp-action="Create" class="btn btn-success">Thêm Tài Khoản Mới</a>
     </div>
 
     <div class="table-responsive">
         <table class="table table-bordered table-striped">
             <thead class="thead-dark">
                 <tr>
-                    <th>@Html.DisplayNameFor(model => model.UserName)</th>
+                    <th>Tên Đăng Nhập</th>
                     <th>@Html.DisplayNameFor(model => model.Email)</th>
-                    <th>@Html.DisplayNameFor(model => model.Password)</th>
-                    <th>@Html.DisplayNameFor(model => model.Role)</th>
-                    <th>@Html.DisplayNameFor(model => model.PageBalance)</th>
-                    <th class="text-center">Actions</th>
+                    <th>Mật Khẩu</th>
+                    <th>Quản Trị</th>
+                    <th>Số Giấy In</th>
+                    <th class="text-center">Cài Đặt</th>
                 </tr>
             </thead>
             <tbody>
@@ -33,9 +33,7 @@
                         <td>@Html.DisplayFor(modelItem => item.Role)</td>
                         <td>@Html.DisplayFor(modelItem => item.PageBalance)</td>
                         <td class="text-center">
-                            <a asp-action="Edit" asp-route-id="@item.UserId" class="btn btn-warning btn-sm">Edit</a>
-                            <a asp-action="Details" asp-route-id="@item.UserId" class="btn btn-info btn-sm">Details</a>
-                            <a asp-action="Delete" asp-route-id="@item.UserId" class="btn btn-danger btn-sm">Delete</a>
+                            <a asp-action="Edit" asp-route-id="@item.UserId" class="btn btn-warning btn-sm">Sửa</a>
                         </td>
                     </tr>
                 }

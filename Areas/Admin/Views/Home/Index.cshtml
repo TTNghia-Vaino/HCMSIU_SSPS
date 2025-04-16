@@ -1,11 +1,47 @@
-﻿@{
-    ViewData["Title"] = "Admin Home - Print Service";
-}
+﻿<style>
+    .sidebar {
+        background-color: #07689f;
+        border-right: 1px solid #07689f;
+    }
+    .nav-link {
+        font-size: 1.1rem;
+        padding: 10px 15px;
+    }
+    .nav-link:hover {
+        background-color: #07689f;
+        border-radius: 5px;
+    }
+    .nav-link.active {
+        font-weight: bold;
+    }
+    .main-content {
+        background-color: #ffff;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .nav-link.text-danger {
+        color: red;
+    }
+    .bi-box-arrow-right {
+        color: red;
+    }
+    .nav-link.text-danger:hover {
+        background-color: red;
+        color: white;
+    }
+    .chart-container {
+        position: relative;
+        height: 40vh;
+        width: 80vw;
+        margin: auto;
+    }
+</style>
 
 <div class="container-fluid">
     <div class="row">
         <!-- Sidebar -->
-        <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar shadow-sm">
+        <nav class="col-md-3 col-lg-2 d-md-block sidebar shadow-sm">
             <div class="position-sticky pt-3">
                 <ul class="nav flex-column">
                     <li class="nav-item">
@@ -38,10 +74,187 @@
         </nav>
 
         <!-- Main Content -->
-        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-            <h1 class="text-center mt-4 mb-5">Admin Dashboard</h1>
-
-            
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
+            <h1 class="text-center mt-4 mb-5">Bảng Thống Kê</h1>
+            <div class="row text-center">
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Tổng Số Người Dùngg</h5>
+                            <p class="card-text display-4">15</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Lệnh In Đang Hoạt Động</h5>
+                            <p class="card-text display-4">5</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Đang Chờ Xử Lý</h5>
+                            <p class="card-text display-4">10</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="userChart"></canvas>
+            </div>
+            <div class="chart-container mt-5">
+                <canvas id="printJobChart"></canvas>
+            </div>
         </main>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+    .sidebar {
+        background-color: #07689f;
+        border-right: 1px solid #07689f;
+    }
+    .nav-link {
+        font-size: 1.1rem;
+        padding: 10px 15px;
+    }
+    .nav-link:hover {
+        background-color: #07689f;
+        border-radius: 5px;
+    }
+    .nav-link.active {
+        font-weight: bold;
+    }
+    .main-content {
+        background-color: #ffff;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .nav-link.text-danger {
+        color: red;
+    }
+    .bi-box-arrow-right {
+        color: red;
+    }
+    .nav-link.text-danger:hover {
+        background-color: red;
+        color: white;
+    }
+    .chart-container {
+        position: relative;
+        height: 40vh;
+        width: 80vw;
+        margin: auto;
+    }
+</style>
+
+<style>
+    .sidebar {
+        background-color: #07689f;
+        border-right: 1px solid #07689f;
+    }
+    .nav-link {
+        font-size: 1.1rem;
+        padding: 10px 15px;
+    }
+    .nav-link:hover {
+        background-color: #07689f;
+        border-radius: 5px;
+    }
+    .nav-link.active {
+        font-weight: bold;
+    }
+    .main-content {
+        background-color: #ffff;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .nav-link.text-danger {
+        color: red;
+    }
+    .bi-box-arrow-right {
+        color: red;
+    }
+    .nav-link.text-danger:hover {
+        background-color: red;
+        color: white;
+    }
+    .chart-container {
+        position: relative;
+        height: 40vh;
+        width: 80vw;
+        margin: auto;
+    }
+</style>
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <nav class="col-md-3 col-lg-2 d-md-block sidebar shadow-sm">
+            <div class="position-sticky pt-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active text-primary" aria-current="page" href="#">
+                            <i class="bi bi-speedometer2"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="bi bi-printer"></i> Print Jobs
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="bi bi-person-circle"></i> Users
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="bi bi-gear"></i> Settings
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-danger" href="#">
+                            <i class="bi bi-box-arrow-right"></i> Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    var ctx1 = document.getElementById('userChart').getContext('2d');
+    var userChart = new Chart(ctx1, {
+        type: 'pie',
+        data: {
+            labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+            datasets: [{
+                label: 'Total Users',
+                data: [50, 60, 70, 80, 90, 100, 150],
+                backgroundColor: [
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)',
+                    'rgba(54, 162, 235, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)',
+                    'rgba(54, 162, 235, 1)'
+</script>
+

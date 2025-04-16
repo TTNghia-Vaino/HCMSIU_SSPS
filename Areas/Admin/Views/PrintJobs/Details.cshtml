@@ -4,50 +4,50 @@
     ViewData["Title"] = "Details";
 }
 
-<h1 class="text-center mt-4">Print Job Details</h1>
+<h1 class="text-center mt-4">Chỉnh Sửa Lệnh In</h1>
 
 <div class="container mt-4">
     <div class="card shadow-sm">
         <div class="card-header bg-primary text-white">
-            <h5 class="mb-0">Print Job Information</h5>
+            <h5 class="mb-0">Chi Tiết Lệnh In</h5>
         </div>
         <div class="card-body">
             <dl class="row">
-                <dt class="col-sm-3">File Name</dt>
+                <dt class="col-sm-3">Tên File: </dt>
                 <dd class="col-sm-9">@Html.DisplayFor(model => model.FileName)</dd>
 
-                <dt class="col-sm-3">Page Count</dt>
+                <dt class="col-sm-3">Số Trang: </dt>
                 <dd class="col-sm-9">@Html.DisplayFor(model => model.PageCount)</dd>
 
-                <dt class="col-sm-3">Total Pages</dt>
+                <dt class="col-sm-3">Tổng Số Trang: </dt>
                 <dd class="col-sm-9">@Html.DisplayFor(model => model.TotalPages)</dd>
 
-                <dt class="col-sm-3">Copies</dt>
+                <dt class="col-sm-3">Bản Sao: </dt>
                 <dd class="col-sm-9">@Html.DisplayFor(model => model.Copies)</dd>
 
-                <dt class="col-sm-3">Is Double-Sided</dt>
+                <dt class="col-sm-3">Hai Mặt: </dt>
                 <dd class="col-sm-9">
                     @(Model.IsDoubleSided.HasValue
                         ? (Model.IsDoubleSided.Value ? "Yes" : "No")
                         : "Not Specified")
                 </dd>
 
-                <dt class="col-sm-3">Start Time</dt>
+                <dt class="col-sm-3">Ngày Bắt Đầu: </dt>
                 <dd class="col-sm-9">@Html.DisplayFor(model => model.StartTime)</dd>
 
-                <dt class="col-sm-3">End Time</dt>
+                <dt class="col-sm-3">Ngày Kết Thúc: </dt>
                 <dd class="col-sm-9">@Html.DisplayFor(model => model.EndTime)</dd>
 
-                <dt class="col-sm-3">Printer</dt>
+                <dt class="col-sm-3">Máy In: </dt>
                 <dd class="col-sm-9">@Html.DisplayFor(model => model.Printer.PrinterId)</dd>
 
-                <dt class="col-sm-3">User</dt>
+                <dt class="col-sm-3">Tài Khoản: </dt>
                 <dd class="col-sm-9">@Html.DisplayFor(model => model.User.UserName)</dd>
             </dl>
         </div>
         <div class="card-footer text-center">
-            <a asp-action="Edit" asp-route-id="@Model?.PrintJobId" class="btn btn-warning me-2">Edit</a>
-            <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+            <a asp-action="Edit" asp-route-id="@Model?.PrintJobId" class="btn btn-warning me-2">Sửa</a>
+            <a asp-action="Index" class="btn btn-secondary">Quay Lại</a>
         </div>
     </div>
 </div>

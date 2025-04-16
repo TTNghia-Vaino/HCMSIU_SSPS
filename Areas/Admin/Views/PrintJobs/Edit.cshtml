@@ -4,69 +4,68 @@
     ViewData["Title"] = "Edit";
 }
 
-<h1>Edit</h1>
+<h1 class="text-center">Chỉnh Sửa Chi Tiết Lệnh In</h1>
 
-<h4>PrintJob</h4>
 <hr />
-<div class="row">
-    <div class="col-md-4">
+<div class="row justify-content-center">
+    <div class="col-md-6">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="PrintJobId" />
             <div class="form-group">
-                <label asp-for="UserId" class="control-label"></label>
+                <label asp-for="UserId" class="control-label">Tài Khoản</label>
                 <select asp-for="UserId" class="form-control" asp-items="ViewBag.UserId" disabled></select>
                 <span asp-validation-for="UserId" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="PrinterId" class="control-label"></label>
+                <label asp-for="PrinterId" class="control-label">Máy In</label>
                 <select asp-for="PrinterId" class="form-control" asp-items="ViewBag.PrinterId"></select>
                 <span asp-validation-for="PrinterId" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="FileName" class="control-label"></label>
+                <label asp-for="FileName" class="control-label">Tên File</label>
                 <input asp-for="FileName" class="form-control" />
                 <span asp-validation-for="FileName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="PageCount" class="control-label"></label>
+                <label asp-for="PageCount" class="control-label">Số Trang</label>
                 <input asp-for="PageCount" class="form-control" />
                 <span asp-validation-for="PageCount" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="TotalPages" class="control-label"></label>
+                <label asp-for="TotalPages" class="control-label">Tổng Số Trang</label>
                 <input asp-for="TotalPages" class="form-control" />
                 <span asp-validation-for="TotalPages" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Copies" class="control-label"></label>
+                <label asp-for="Copies" class="control-label">Bản Sao</label>
                 <input asp-for="Copies" class="form-control" />
                 <span asp-validation-for="Copies" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="IsDoubleSided" class="control-label"></label>
+                <label asp-for="IsDoubleSided" class="control-label">Hai Mặt</label>
                 <input asp-for="IsDoubleSided" class="form-control" />
                 <span asp-validation-for="IsDoubleSided" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="StartTime" class="control-label"></label>
+                <label asp-for="StartTime" class="control-label">Ngày Bắt Đầu</label>
                 <input asp-for="StartTime" class="form-control" />
                 <span asp-validation-for="StartTime" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="EndTime" class="control-label"></label>
+                <label asp-for="EndTime" class="control-label">Ngày Kết Thúc</label>
                 <input asp-for="EndTime" class="form-control" />
                 <span asp-validation-for="EndTime" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+            <div class="form-group text-center">
+                <input type="submit" value="Lưu" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
+<div class="text-center">
+    <a asp-action="Index">Quay Lại</a>
 </div>
 
 @section Scripts {

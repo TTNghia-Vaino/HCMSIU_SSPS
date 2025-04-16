@@ -4,30 +4,30 @@
     ViewData["Title"] = "Index";
 }
 
-<h1 class="text-center mt-4">Print Jobs</h1>
+<h1 class="text-center mt-4">Danh Sách Lệnh In</h1>
 
 <div class="container mt-4">
     <div class="d-flex justify-content-between mb-3">
         <p>
-            <a asp-action="Create" class="btn btn-success">Create New</a>
-            <a asp-action="Index" asp-controller="Home" class="btn btn-secondary">Back to Home</a>
+            <a asp-action="Create" class="btn btn-success">Tạo Lệnh Mới</a>
+            <a asp-action="Index" asp-controller="Home" class="btn btn-secondary">Quay Lại</a>
         </p>
     </div>
 
     <div class="table-responsive">
         <table class="table table-bordered table-striped">
-            <thead class="thead-dark">
+            <thead style="background-color: #07689f; color: white;">
                 <tr>
-                    <th>@Html.DisplayNameFor(model => model.FileName)</th>
-                    <th>@Html.DisplayNameFor(model => model.PageCount)</th>
-                    <th>@Html.DisplayNameFor(model => model.TotalPages)</th>
-                    <th>@Html.DisplayNameFor(model => model.Copies)</th>
-                    <th>@Html.DisplayNameFor(model => model.IsDoubleSided)</th>
-                    <th>@Html.DisplayNameFor(model => model.StartTime)</th>
-                    <th>@Html.DisplayNameFor(model => model.EndTime)</th>
-                    <th>@Html.DisplayNameFor(model => model.Printer)</th>
-                    <th>@Html.DisplayNameFor(model => model.User)</th>
-                    <th style="width: 80px;"> @Html.DisplayNameFor(model => model.Status) </th>
+                    <th>Tên Tệp</th>
+                    <th>Số Trang</th>
+                    <th>Tổng Số Trang</th>
+                    <th>Bản Sao</th>
+                    <th>Hai Mặt</th>
+                    <th>Bắt Đầu</th>
+                    <th>Kết Thúc</th>
+                    <th>Máy In</th>
+                    <th>ID</th>
+                    <th style="width: 100px;">Trạng Thái</th>
                 </tr>
             </thead>
             <tbody>
@@ -52,4 +52,3 @@
         </table>
     </div>
 </div>
-

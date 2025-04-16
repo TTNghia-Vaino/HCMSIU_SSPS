@@ -7,15 +7,15 @@
 <div class="container mt-4">
     <div class="row">
         <div class="col">
-            <h1 class="text-center">Transaction List</h1>
+            <h1 class="text-center">Lịch Sử Giao Dịch
             <hr />
         </div>
     </div>
 
     <div class="row mb-3">
         <div class="col text-right">
-            <a asp-action="Create" class="btn btn-primary">Create New Transaction</a>
-            <a asp-action="Index" asp-controller="Home" class="btn btn-secondary">Back to Home</a>
+            <a asp-action="Create" class="btn btn-success">Mua Thêm Trang In</a>
+            <a asp-action="Index" asp-controller="Home" class="btn btn-secondary">Quay Lại</a>
         </div>
     </div>
 
@@ -24,10 +24,10 @@
             <table class="table table-bordered table-striped">
                 <thead class="thead-dark">
                     <tr>
-                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Amount)</th>
-                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Status)</th>
-                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Description)</th>
-                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Timestamp)</th>
+                        <th>Số Lượng</th>
+                        <th>Trạng Thái</th>
+                        <th>Giao Dịch</th>
+                        <th>Thời Gian</th>
                         
                     </tr>
                 </thead>

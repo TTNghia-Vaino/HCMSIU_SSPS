@@ -4,7 +4,7 @@
     ViewData["Title"] = "System Settings";
 }
 
-<h1 class="text-center mt-4 mb-5">System Settings</h1>
+<h1 class="text-center mt-4 mb-5">Cài Đặt Mặc Định</h1>
 
 <div class="container">
 
@@ -12,10 +12,10 @@
         <table class="table table-bordered table-striped">
             <thead class="thead-dark">
                 <tr>
-                    <th>@Html.DisplayNameFor(model => model.SettingKey)</th>
-                    <th>@Html.DisplayNameFor(model => model.SettingValue)</th>
-                    <th>@Html.DisplayNameFor(model => model.LastUpdated)</th>
-                    <th class="text-center">Actions</th>
+                    <th>Tên Chức Năng</th>
+                    <th>Thiết Lập Giá Trị</th>
+                    <th>Thời Gian Cập Nhật</th>
+                    <th class="text-center">Cài Đặt</th>
                 </tr>
             </thead>
             <tbody>
@@ -26,8 +26,8 @@
                         <td>@Html.DisplayFor(modelItem => item.SettingValue)</td>
                         <td>@item.LastUpdated?.ToString("g")</td>
                         <td class="text-center">
-                            <a asp-action="Edit" asp-route-id="@item.SettingId" class="btn btn-warning btn-sm">Edit</a>
-                            <a asp-action="Details" asp-route-id="@item.SettingId" class="btn btn-info btn-sm">Details</a>
+                            <a asp-action="Edit" asp-route-id="@item.SettingId" class="btn btn-warning btn-sm">Sửa</a>
+                            
                         </td>
                     </tr>
                 }
