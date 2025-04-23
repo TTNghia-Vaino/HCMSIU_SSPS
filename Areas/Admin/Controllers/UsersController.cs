@@ -92,9 +92,14 @@ namespace HCMSIU_SSPS.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("UserId,UserName,Email,Password,Role,PageBalance")] User user)
+        public async Task<IActionResult> Edit(int id, [Bind("UserId,FullName,UserName,Email,Password,Role,PageBalance")] User user)
         {
-            if (id != user.UserId)
+            if (user.Password == null)
+            {
+                var existingUser = _context.Users.FirstOrDefault(u => u.UserName == user.UserName);
+                user.Password = existingUser.Password;
+            }
+            if (id == null)
             {
                 return NotFound();
             }
