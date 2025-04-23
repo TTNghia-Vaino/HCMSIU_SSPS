@@ -1,0 +1,43 @@
+﻿@model HCMSIU_SSPS.Models.User
+
+@{
+    ViewData["Title"] = "Thông tin người dùng";
+}
+
+
+
+<div class="container mt-4">
+    <hr />
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white text-center py-3">
+                    <h5 class="mb-0 fw-bold">BẢNG THÔNG TIN NGƯỜI DÙNG</h5>
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <!-- FullName -->
+                        <dt class="col-sm-4 fw-bold">Tên đầy đủ</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.FullName)</dd>
+                        <!-- UserName -->
+                        <dt class="col-sm-4 fw-bold">Tài khoản</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.UserName)</dd>
+
+                        <!-- Email -->
+                        <dt class="col-sm-4 fw-bold">Email</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.Email)</dd>
+
+
+                        <!-- PageBalance -->
+                        <dt class="col-sm-4 fw-bold">Số trang khả dụng</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.PageBalance)</dd>
+                    </dl>
+                </div>
+                <div class="card-footer text-center">
+                    <a asp-action="Edit" asp-route-id="@Model?.UserName" class="btn btn-warning mx-2">Đổi mật khẩu</a>
+                    <a asp-action="Index" asp-controller="Home" class="btn btn-secondary mx-2">Quay về Trang chủ</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using HCMSIU_SSPS.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace HCMSIU_SSPS.Models;
+namespace HCMSIU_SSPS.Data;
 
-public partial class HcmsiuSspsContext : DbContext
+public partial class HcmsiuSsps : DbContext
 {
-    public HcmsiuSspsContext()
+    public HcmsiuSsps()
     {
     }
 
-    public HcmsiuSspsContext(DbContextOptions<HcmsiuSspsContext> options)
+    public HcmsiuSsps(DbContextOptions<HcmsiuSsps> options)
         : base(options)
     {
     }
@@ -27,13 +28,13 @@ public partial class HcmsiuSspsContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Data Source=DESKTOP-SC7J6G7\\NGHIADB;Initial Catalog=HCMSIU_SSPS;Integrated Security=True;Encrypt=True;Trust Server Certificate=True");
+        => optionsBuilder.UseSqlServer("Data Source=DESKTOP-SC7J6G7\\NGHIADB;Initial Catalog=HCMSIU_SSPS;Integrated Security=True;Trust Server Certificate=True");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<PrintJob>(entity =>
         {
-            entity.HasKey(e => e.PrintJobId).HasName("PK__PrintJob__180135C0FD672AE5");
+            entity.HasKey(e => e.PrintJobId).HasName("PK__PrintJob__180135C0C2ACBFAF");
 
             entity.Property(e => e.PrintJobId)
                 .ValueGeneratedNever()
@@ -42,26 +43,22 @@ public partial class HcmsiuSspsContext : DbContext
             entity.Property(e => e.FileName)
                 .HasMaxLength(255)
                 .IsUnicode(false);
-            entity.Property(e => e.IsA3)
-                .HasDefaultValue(false)
-                .HasColumnName("isA3");
             entity.Property(e => e.PrinterId).HasColumnName("PrinterID");
             entity.Property(e => e.StartTime).HasColumnType("datetime");
-            entity.Property(e => e.Status).HasDefaultValue(0);
             entity.Property(e => e.UserId).HasColumnName("UserID");
 
             entity.HasOne(d => d.Printer).WithMany(p => p.PrintJobs)
                 .HasForeignKey(d => d.PrinterId)
-                .HasConstraintName("FK__PrintJobs__Print__6754599E");
+                .HasConstraintName("FK__PrintJobs__Print__5441852A");
 
             entity.HasOne(d => d.User).WithMany(p => p.PrintJobs)
                 .HasForeignKey(d => d.UserId)
-                .HasConstraintName("FK__PrintJobs__UserI__66603565");
+                .HasConstraintName("FK__PrintJobs__UserI__534D60F1");
         });
 
         modelBuilder.Entity<Printer>(entity =>
         {
-            entity.HasKey(e => e.PrinterId).HasName("PK__Printers__D452AB214D7E42B0");
+            entity.HasKey(e => e.PrinterId).HasName("PK__Printers__D452AB21DABAF59F");
 
             entity.Property(e => e.PrinterId)
                 .ValueGeneratedNever()
@@ -85,7 +82,7 @@ public partial class HcmsiuSspsContext : DbContext
 
         modelBuilder.Entity<SystemSetting>(entity =>
         {
-            entity.HasKey(e => e.SettingId).HasName("PK__SystemSe__54372AFD44E54B5A");
+            entity.HasKey(e => e.SettingId).HasName("PK__SystemSe__54372AFD1CA872EC");
 
             entity.Property(e => e.SettingId)
                 .ValueGeneratedNever()
@@ -101,12 +98,11 @@ public partial class HcmsiuSspsContext : DbContext
 
         modelBuilder.Entity<Transaction>(entity =>
         {
-            entity.HasKey(e => e.TransactionId).HasName("PK__Transact__55433A4BCA3E89CC");
+            entity.HasKey(e => e.TransactionId).HasName("PK__Transact__55433A4BEEFB3EC4");
 
             entity.Property(e => e.TransactionId)
                 .ValueGeneratedNever()
                 .HasColumnName("TransactionID");
-            entity.Property(e => e.Amount).HasColumnType("int");
             entity.Property(e => e.Description)
                 .HasMaxLength(255)
                 .IsUnicode(false);
@@ -115,15 +111,16 @@ public partial class HcmsiuSspsContext : DbContext
 
             entity.HasOne(d => d.User).WithMany(p => p.Transactions)
                 .HasForeignKey(d => d.UserId)
-                .HasConstraintName("FK__Transacti__UserI__68487DD7");
+                .HasConstraintName("FK__Transacti__UserI__5535A963");
         });
 
         modelBuilder.Entity<User>(entity =>
         {
-            entity.HasKey(e => e.UserId).HasName("PK__Users__1788CCAC8E593E94");
+            entity.HasKey(e => e.UserId).HasName("PK__Users__1788CCAC8D30C318");
 
             entity.Property(e => e.UserId).HasColumnName("UserID");
             entity.Property(e => e.Email).HasMaxLength(255);
+            entity.Property(e => e.FullName).HasMaxLength(255);
             entity.Property(e => e.PageBalance).HasDefaultValue(0);
             entity.Property(e => e.Password).HasMaxLength(255);
             entity.Property(e => e.UserName).HasMaxLength(255);

@@ -25,9 +25,9 @@ public partial class PrintJob
 
     public DateTime? EndTime { get; set; }
 
-    public int? Status { get; set; }
-
     public bool? IsA3 { get; set; }
+
+    public int? Status { get; set; }
 
     public virtual Printer? Printer { get; set; }
 
