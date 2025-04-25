@@ -12,10 +12,14 @@
         <div class="col-md-8">
             <div class="card shadow-sm border-0">
                 <div class="card-header bg-danger text-white text-center py-3">
-                    <h5 class="mb-0 fw-bold">Are you sure you want to delete this user?</h5>
+                    <h5 class="mb-0 fw-bold">Bạn có chắc chắn muốn xóa người dùng?</h5>
                 </div>
                 <div class="card-body">
                     <dl class="row">
+
+                        <!-- Fullname -->
+                        <dt class="col-sm-4 fw-bold">Tên đầy đủ</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.FullName)</dd>
                         <!-- UserName -->
                         <dt class="col-sm-4 fw-bold">Username</dt>
                         <dd class="col-sm-8">@Html.DisplayFor(model => model.UserName)</dd>

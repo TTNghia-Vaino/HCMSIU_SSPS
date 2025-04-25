@@ -80,7 +80,7 @@ namespace HCMSIU_SSPS.Controllers
             await _context.SaveChangesAsync();
 
             TempData["SuccessMessage"] = "Đổi mật khẩu thành công!";
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("ChangePassword", new { username = model.Username });
         }
 
 

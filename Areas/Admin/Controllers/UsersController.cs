@@ -56,6 +56,21 @@ namespace HCMSIU_SSPS.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("UserId,UserName,Email,Password,Role,PageBalance")] User user)
         {
+            // Kiểm tra trùng username
+            bool usernameExists = await _context.Users.AnyAsync(u => u.UserName == user.UserName);
+            if (usernameExists)
+            {
+                TempData["Error"] = "Tên tài khoản đã tồn tại.";
+                return RedirectToAction(nameof(Create));
+            }
+
+            // Kiểm tra trùng email
+            bool emailExists = await _context.Users.AnyAsync(u => u.Email == user.Email);
+            if (emailExists)
+            {
+                TempData["Error"] = "Email đã được sử dụng.";
+                return RedirectToAction(nameof(Create));
+            }
             var settingPage = await _context.SystemSettings
                                         .FirstOrDefaultAsync(s => s.SettingId == 1);
             var pageBal = 0;
@@ -79,53 +94,122 @@ namespace HCMSIU_SSPS.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var user = await _context.Users.FindAsync(id);
+            var user = await _context.Users
+              .AsNoTracking()
+             .FirstOrDefaultAsync(u => u.UserId == id);
+
             if (user == null)
             {
                 return NotFound();
             }
-            return View(user);
+            var uservm = new UserViewModel
+            {
+                UserId = user.UserId,
+                FullName = user.FullName,
+                UserName = user.UserName,
+                Email = user.Email,
+                Password = user.Password,
+                Role = user.Role,
+                PageBalance = user.PageBalance
+            };
+            return View(uservm);
         }
 
         // POST: Admin/Users/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("UserId,FullName,UserName,Email,Password,Role,PageBalance")] User user)
+        public async Task<IActionResult> Edit(int id, [Bind("UserId,FullName,UserName,Email,Password,Role,PageBalance")] UserViewModel user)
         {
-            if (user.Password == null)
+            if (!ModelState.IsValid)
             {
-                var existingUser = _context.Users.FirstOrDefault(u => u.UserName == user.UserName);
-                user.Password = existingUser.Password;
+                return View(user);
             }
-            if (id == null)
+
+            // Tìm đúng bản ghi đang được theo dõi (tracked) bởi DbContext
+            var userToUpdate = await _context.Users.FirstOrDefaultAsync(u => u.UserId == id);
+            if (userToUpdate == null)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            // Nếu không nhập mật khẩu mới thì giữ nguyên mật khẩu cũ
+            if (user.Password == null)
             {
-                try
-                {
-                    _context.Update(user);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!UserExists(user.UserId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                user.Password = userToUpdate.Password;
+            }
+
+            // Cập nhật thủ công các field
+            userToUpdate.FullName = user.FullName;
+            userToUpdate.UserName = user.UserName;
+            userToUpdate.Email = user.Email;
+            userToUpdate.Password = user.Password;
+            userToUpdate.Role = user.Role;
+            userToUpdate.PageBalance = user.PageBalance;
+
+            try
+            {
+                await _context.SaveChangesAsync(); // Chỉ cần SaveChanges, không cần Update()
                 return RedirectToAction(nameof(Index));
             }
-            return View(user);
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!UserExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
         }
+
+
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Edit(int id, [Bind("UserId,FullName,UserName,Email,Password,Role,PageBalance")] UserViewModel user)
+        //{
+        //    if (user.Password == null)
+        //    {
+        //        var existingUser = _context.Users.FirstOrDefault(u => u.UserName == user.UserName);
+        //        user.Password = existingUser.Password;
+        //    }
+
+
+        //    var user2 = new User
+        //    {
+        //        UserId = id,
+        //        FullName = user.FullName,
+        //        UserName = user.UserName,
+        //        Email = user.Email,
+        //        Password = user.Password,
+        //        Role = user.Role,
+        //        PageBalance = user.PageBalance
+        //    };
+        //    if (ModelState.IsValid)
+        //    {
+        //        try
+        //        {
+        //            _context.Update(user2);
+        //            await _context.SaveChangesAsync();
+        //        }
+        //        catch (DbUpdateConcurrencyException)
+        //        {
+        //            if (!UserExists(user2.UserId))
+        //            {
+        //                return NotFound();
+        //            }
+        //            else
+        //            {
+        //                throw;
+        //            }
+        //        }
+        //        return RedirectToAction(nameof(Index));
+        //    }
+        //    return View(user);
+        //}
 
         // GET: Admin/Users/Delete/5
         public async Task<IActionResult> Delete(int? id)

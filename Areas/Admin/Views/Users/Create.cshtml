@@ -6,6 +6,21 @@
 
 <div class="container mt-5">
     <h1 class="text-center mb-4">Thêm Tài Khoản Mới</h1>
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Lỗi:</strong> @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong>Thành công:</strong> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
 
     <div class="card shadow-lg">
         <div class="card-body">
@@ -14,6 +29,13 @@
             <form asp-action="Create">
                 <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
 
+
+                <!-- FullName -->
+                <div class="form-group mb-3">
+                    <label asp-for="FullName" class="form-label fw-bold">Tên Đầy Đủ</label>
+                    <input asp-for="FullName" class="form-control" placeholder="Nhập Tên Đầy Đủ" />
+                    <span asp-validation-for="FullName" class="text-danger"></span>
+                </div>
                 <!-- Username -->
                 <div class="form-group mb-3">
                     <label asp-for="UserName" class="form-label fw-bold">Tên Tài Khoản</label>
@@ -28,7 +50,7 @@
                     <span asp-validation-for="Email" class="text-danger"></span>
                 </div>
 
-                <!-- Password -->
+                <!-- Password, không cho phép null ở đây -->
                 <div class="form-group mb-3">
                     <label asp-for="Password" class="form-label fw-bold">Mật Khẩu</label>
                     <input asp-for="Password" type="password" class="form-control" placeholder="Nhập Mật Khẩu" />
@@ -55,7 +77,7 @@
         </div>
     </div>
 </div>
-
+<!--Viết modal pop up với ajax tương ứng để hiển thị thông báo email hoặc tài khoản đã tồn tại-->
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");

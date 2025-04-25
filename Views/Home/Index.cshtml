@@ -125,7 +125,7 @@
             data: { userName: username },
             success: function (data) {
                 // Hiển thị PageBalance trong card-body
-                $('#pageBalance').text('Page Balance: ' + data.pageBalance).css('color', 'gold');
+                $('#pageBalance').text('Số trang khả dụng: ' + data.pageBalance).css('color', 'gold');
             },
             error: function () {
                 $('#pageBalance').text('Failed to load page balance.');

@@ -15,11 +15,12 @@
         <table class="table table-bordered table-striped">
             <thead class="thead-dark">
                 <tr>
+                    <th>Tên Đầy Đủ</th>
                     <th>Tên Đăng Nhập</th>
-                    <th>@Html.DisplayNameFor(model => model.Email)</th>
+                    <th>Email</th>
                     <th>Mật Khẩu</th>
                     <th>Quản Trị</th>
-                    <th>Số Giấy In</th>
+                    <th>Số Trang Khả Dụng</th>
                     <th class="text-center">Cài Đặt</th>
                 </tr>
             </thead>
@@ -27,6 +28,7 @@
                 @foreach (var item in Model)
                 {
                     <tr>
+                        <td>@Html.DisplayFor(modelItem => item.FullName)</td>
                         <td>@Html.DisplayFor(modelItem => item.UserName)</td>
                         <td>@Html.DisplayFor(modelItem => item.Email)</td>
                         <td>@Html.DisplayFor(modelItem => item.Password)</td>
