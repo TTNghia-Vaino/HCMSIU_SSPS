@@ -48,7 +48,7 @@
                     <th style ="width: 100px;">Ngày Kết Thúc</th>
                     <th style ="width: 100px;">Máy In</th>
                     <th>Tài Khoản</th>
-                    <th style="width: 100px;"> Trạng Thái </th> <!--làm cho cột này rộng ra 1 tí-->
+                    <th style="width: 100px;"> Trạng Thái </th> 
                     <th class="text-center" style="width:300px">Cài Đặt</th>
                 </tr>
             </thead>
@@ -68,7 +68,7 @@
                         <td>@item.Printer?.PrinterId</td>
                         <td>@item.User?.UserName</td>
                         <td data-id="@item.PrintJobId">
-                            @(item.Status == 0 ? "Pending" : (item.Status == 1 ? "Done" : "N/A"))
+                            @(item.Status == 0 ? "Đang xử lý" : (item.Status == 1 ? "Đã xong" : "N/A"))
                         </td>
 
 

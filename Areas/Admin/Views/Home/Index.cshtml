@@ -1,4 +1,5 @@
-﻿<style>
+﻿
+<style>
     .sidebar {
         background-color: #07689f;
         border-right: 1px solid #07689f;
@@ -40,33 +41,28 @@
 
 <div class="container-fluid">
     <div class="row">
-        <!-- Sidebar -->
+
         <nav class="col-md-3 col-lg-2 d-md-block sidebar shadow-sm">
             <div class="position-sticky pt-3">
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a class="nav-link active text-primary" aria-current="page" href="#">
+                        <a class="nav-link active text-primary" aria-current="page" asp-action="Index" asp-controller="Home" asp-area="Admin">
                             <i class="bi bi-speedometer2"></i> Dashboard
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">
-                            <i class="bi bi-printer"></i> Print Jobs
+                        <a class="nav-link" asp-action="Index" asp-controller="PrintJobs">
+                            <i class="bi bi-printer"></i> Print Jobs   
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">
+                        <a class="nav-link" asp-action="Index" asp-controller="Users">
                             <i class="bi bi-person-circle"></i> Users
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">
+                        <a class="nav-link" asp-action="Index" asp-controller="SystemSettings">
                             <i class="bi bi-gear"></i> Settings
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-danger" href="#">
-                            <i class="bi bi-box-arrow-right"></i> Logout
                         </a>
                     </li>
                 </ul>
@@ -80,24 +76,24 @@
                 <div class="col-md-4 mb-4">
                     <div class="card">
                         <div class="card-body">
-                            <h5 class="card-title">Tổng Số Người Dùngg</h5>
-                            <p class="card-text display-4">15</p>
+                            <h5 class="card-title">Tổng Số Người Dùng</h5>
+                            <p class="card-text display-4">@ViewBag.TotalUser</p>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-4 mb-4">
                     <div class="card">
                         <div class="card-body">
-                            <h5 class="card-title">Lệnh In Đang Hoạt Động</h5>
-                            <p class="card-text display-4">5</p>
+                            <h5 class="card-title">Máy In Đang Hoạt Động</h5>
+                            <p class="card-text display-4">@ViewBag.TotalPrinter</p>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-4 mb-4">
                     <div class="card">
                         <div class="card-body">
-                            <h5 class="card-title">Đang Chờ Xử Lý</h5>
-                            <p class="card-text display-4">10</p>
+                            <h5 class="card-title">Lệnh In Đang Chờ Xử Lý</h5>
+                            <p class="card-text display-4">@ViewBag.TotalPrintJob</p>
                         </div>
                     </div>
                 </div>
@@ -193,7 +189,7 @@
     }
 </style>
 
-<div class="container-fluid">
+@* <div class="container-fluid">
     <div class="row">
         <!-- Sidebar -->
         <nav class="col-md-3 col-lg-2 d-md-block sidebar shadow-sm">
@@ -226,7 +222,7 @@
                     </li>
                 </ul>
             </div>
-        </nav>
+        </nav> *@
 
         <!-- Main Content -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
