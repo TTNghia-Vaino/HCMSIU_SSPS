@@ -23,6 +23,7 @@
                     <th>Tổng Số Trang</th>
                     <th>Bản Sao</th>
                     <th>Hai Mặt</th>
+                    <th>In A3</th>
                     <th>Bắt Đầu</th>
                     <th>Kết Thúc</th>
                     <th>Máy In</th>
@@ -38,13 +39,20 @@
                         <td>@Html.DisplayFor(modelItem => item.PageCount)</td>
                         <td>@Html.DisplayFor(modelItem => item.TotalPages)</td>
                         <td>@Html.DisplayFor(modelItem => item.Copies)</td>
-                        <td>@Html.DisplayFor(modelItem => item.IsDoubleSided)</td>
+                        @* <td>@Html.DisplayFor(modelItem => item.IsDoubleSided)</td> <!-- tạo ra 1 ô vuông nếu là true thì tích, nếu là không thì không tích--> *@
+                        <td>
+                            @(item.IsDoubleSided == true ? "☑" : "☐")
+                        </td>
+                        <td>
+                            @(item.IsA3 == true ? "☑" : "☐")
+                        </td>
+
                         <td>@item.StartTime?.ToString("g")</td>
                         <td>@item.EndTime?.ToString("g")</td>
                         <td>@item.Printer?.PrinterId </td>
                         <td>@item.User?.UserId </td>
                         <td data-id="@item.PrintJobId">
-                            @(item.Status == 0 ? "Pending" : (item.Status == 1 ? "Done" : "N/A"))
+                            @(item.Status == 0 ? "Đang chờ in" : (item.Status == 1 ? "Đã in" : "N/A"))
                         </td>
                     </tr>
                 }

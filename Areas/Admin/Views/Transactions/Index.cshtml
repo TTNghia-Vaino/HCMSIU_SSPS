@@ -25,11 +25,11 @@
                     <tr>
                         <td>@Html.DisplayFor(modelItem => item.Amount)</td>
                         <td data-id="@item.TransactionId" id="status-@item.TransactionId">
-                            @(item.Status == 0 ? "Pending" : (item.Status == 1 ? "Done" : "N/A"))
+                            @(item.Status == 0 ? "Đang xử lý" : (item.Status == 1 ? "Đã xử lý" : "N/A"))
                         </td>
                         <td>@Html.DisplayFor(modelItem => item.Description)</td>
                         <td>@item.Timestamp?.ToString("g")</td>
-                        <td>@item.User?.UserId</td>
+                        <td>@item.User?.UserName</td>
                         <td class="text-center">
                             <button class="btn btn-success btn-sm changeStatusBtn"
                                     data-id="@item.TransactionId"

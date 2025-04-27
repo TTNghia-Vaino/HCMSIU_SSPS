@@ -1,0 +1,36 @@
+﻿@model IEnumerable<HCMSIU_SSPS.Models.PrintJob>
+@foreach (var item in Model)
+{
+    <tr>
+        <td>@Html.DisplayFor(modelItem => item.FileName)</td>
+        <td>@Html.DisplayFor(modelItem => item.PageCount)</td>
+        <td>@Html.DisplayFor(modelItem => item.TotalPages)</td>
+        <td>@Html.DisplayFor(modelItem => item.Copies)</td>
+        <td>
+            @(item.IsDoubleSided == true ? "☑" : "☐")
+        </td>
+        <td>
+            @(item.IsA3 == true ? "☑" : "☐")
+        </td>
+        <td>@item.StartTime?.ToString("g")</td>
+        <td data-id="@item.PrintJobId">
+            @item.EndTime?.ToString("g")  <!-- Hiển thị EndTime hoặc "N/A" nếu null -->
+        </td>
+        <td>@item.Printer?.PrinterId</td>
+        <td>@item.User?.UserName</td>
+        <td data-id="@item.PrintJobId">
+            @(item.Status == 0 ? "Đang xử lý" : (item.Status == 1 ? "Đã xong" : "N/A"))
+        </td>
+
+
+        <td class="text-center">
+            @*  <a asp-action="Edit" asp-route-id="@item.PrintJobId" class="btn btn-warning btn-sm">Edit</a> *@ <!--Viết Ajax cho cái button này button tên là đỏi trạng thái, sẽ tác động lên item.status, nếu đang là 0 thì đổi thành 1, 1 thì đổi thành 0 -->
+            <button class="btn btn-warning btn-sm changeStatusBtn"
+                    data-id="@item.PrintJobId"
+                    data-status="@item.Status">
+                Thay đổi Trạng Thái
+            </button>
+            @* <a asp-action="Details" asp-route-id="@item.PrintJobId" class="btn btn-info btn-sm">Sửa</a> *@
+        </td>
+    </tr>
+}

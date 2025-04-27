@@ -94,7 +94,7 @@ namespace HCMSIU_SSPS.Controllers
             do
             {
                 // Tạo một số ngẫu nhiên
-                newId = random.Next(100000, 999999); // Bạn có thể thay đổi phạm vi nếu muốn
+                newId = random.Next(100000, 999999); // có thể thay đổi phạm vi nếu muốn
 
             } while (_context.Transactions.Any(p => p.TransactionId == newId)); // Kiểm tra nếu đã có PrintJobId trong database
 

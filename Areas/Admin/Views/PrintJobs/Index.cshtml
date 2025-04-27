@@ -40,15 +40,16 @@
             <thead class="thead-dark">
                 <tr>
                     <th>Tên File</th>
-                    <th style ="width: 100px;">Số Trang</th>
-                    <th style ="width: 100px;">Tổng Số Trang</th>
-                    <th style ="width: 100px;">Bản Sao</th>
+                    <th style="width: 100px;">Số Trang</th>
+                    <th style="width: 100px;">Tổng Số Trang</th>
+                    <th style="width: 100px;">Bản Sao</th>
                     <th>Hai Mặt</th>
+                    <th>In A3</th>
                     <th>Ngày Bắt Đầu</th>
-                    <th style ="width: 100px;">Ngày Kết Thúc</th>
-                    <th style ="width: 100px;">Máy In</th>
+                    <th style="width: 100px;">Ngày Kết Thúc</th>
+                    <th style="width: 100px;">Máy In</th>
                     <th>Tài Khoản</th>
-                    <th style="width: 100px;"> Trạng Thái </th> 
+                    <th style="width: 100px;"> Trạng Thái </th>
                     <th class="text-center" style="width:300px">Cài Đặt</th>
                 </tr>
             </thead>
@@ -60,7 +61,12 @@
                         <td>@Html.DisplayFor(modelItem => item.PageCount)</td>
                         <td>@Html.DisplayFor(modelItem => item.TotalPages)</td>
                         <td>@Html.DisplayFor(modelItem => item.Copies)</td>
-                        <td>@Html.DisplayFor(modelItem => item.IsDoubleSided)</td>
+                        <td>
+                            @(item.IsDoubleSided == true ? "☑" : "☐")
+                        </td>
+                        <td>
+                            @(item.IsA3 == true ? "☑" : "☐")
+                        </td>
                         <td>@item.StartTime?.ToString("g")</td>
                         <td data-id="@item.PrintJobId">
                             @item.EndTime?.ToString("g")  <!-- Hiển thị EndTime hoặc "N/A" nếu null -->
@@ -73,18 +79,20 @@
 
 
                         <td class="text-center">
-                           @*  <a asp-action="Edit" asp-route-id="@item.PrintJobId" class="btn btn-warning btn-sm">Edit</a> *@ <!--Viết Ajax cho cái button này button tên là đỏi trạng thái, sẽ tác động lên item.status, nếu đang là 0 thì đổi thành 1, 1 thì đổi thành 0 -->
+                            @*  <a asp-action="Edit" asp-route-id="@item.PrintJobId" class="btn btn-warning btn-sm">Edit</a> *@ <!--Viết Ajax cho cái button này button tên là đỏi trạng thái, sẽ tác động lên item.status, nếu đang là 0 thì đổi thành 1, 1 thì đổi thành 0 -->
                             <button class="btn btn-warning btn-sm changeStatusBtn"
                                     data-id="@item.PrintJobId"
                                     data-status="@item.Status">
                                 Thay đổi Trạng Thái
                             </button>
-                           <a asp-action="Details" asp-route-id="@item.PrintJobId" class="btn btn-info btn-sm">Sửa</a>
+                            <a asp-action="Details" asp-route-id="@item.PrintJobId" class="btn btn-info btn-sm">Sửa</a>
                         </td>
                     </tr>
                 }
+
             </tbody>
         </table>
+        
     </div>
 </div>
 
@@ -111,7 +119,7 @@
                 success: function (data) {
                     if (data.success) {
                         // Cập nhật lại trạng thái của thẻ <td> chứa Status
-                        var statusText = (data.newStatus === 0) ? 'Pending' : 'Done';
+                        var statusText = (data.newStatus === 0) ? 'Đang xử lý' : 'Đã in';
 
                         // Cập nhật lại nội dung của thẻ <td> có data-id tương ứng cho Status
                         $('td[data-id="' + printJobId + '"]').text(statusText);
@@ -184,7 +192,7 @@
                 contentType: 'application/json',
                 success: function (response) {
                     // Replace the table body with new data
-                    $('tbody').html(response);
+                    $('table tbody').html(response);
                 },
                 error: function () {
                     alert('Error while filtering data.');

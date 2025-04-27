@@ -226,7 +226,7 @@ namespace HCMSIU_SSPS.Controllers
                 }
                 else
                 {
-                    return Json(new { success = false, message = "Unsupported file type. Please upload PDF or PPTX." });
+                    return Json(new { success = false, message = "Xin lỗi, hệ thống không hỗ trợ loại file bạn gửi lên. Vui lòng liên hệ quản lý để biết thêm!" });
                 }
 
                 // Xóa file tạm sau khi xử lý

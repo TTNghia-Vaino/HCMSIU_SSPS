@@ -37,7 +37,7 @@
                         <tr>
                             <td>@Html.DisplayFor(modelItem => item.Amount)</td>
                             <td data-id="@item.Status">
-                                @(item.Status == 0 ? "Pending" : (item.Status == 1 ? "Done" : "N/A"))
+                                @(item.Status == 0 ? "Đang xử lý" : (item.Status == 1 ? "Đã xử lý" : "N/A"))
                             </td>
                             <td>@Html.DisplayFor(modelItem => item.Description)</td>
                             <td>@Html.DisplayFor(modelItem => item.Timestamp)</td>
