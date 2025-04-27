@@ -56,6 +56,10 @@ namespace HCMSIU_SSPS.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("PrinterId,PrinterName,Brand,Model,Location,IsEnable")] Printer printer)
         {
+            // check coi mã máy in đã tới số máy rồi, +1 vô, vì quên làm identity trong sql rồi, printerID
+            var lastPrinter = await _context.Printers.OrderByDescending(p => p.PrinterId).FirstOrDefaultAsync();
+            printer.PrinterId = lastPrinter != null ? lastPrinter.PrinterId + 1 : 1;  // Nếu chưa có máy in nào thì gán PrinterId là 1
+
             printer.IsEnable = 1; // Enable after Create a new printer
             if (ModelState.IsValid)
             {
