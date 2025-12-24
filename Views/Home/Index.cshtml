@@ -1,17 +1,7 @@
 ﻿@{
     ViewData["Title"] = "Smart Print Services";
     var username = Context.Session.GetString("UserName");
-    string fullName = "";
-    if (!string.IsNullOrEmpty(username))
-    {
-        using (var db = new HcmsiuSspsContext())
-        {
-            fullName = db.Users
-                         .Where(u => u.UserName == username)
-                         .Select(u => u.FullName)
-                         .FirstOrDefault();
-        }
-    }
+
 }
 
 <!-- Include Bootstrap CSS and JS -->
@@ -62,7 +52,7 @@
         <div class="col-md-3">
             <div class="card shadow-sm">
                 <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                    <strong>Xin Chào,<br /> @fullName</strong>
+                    <strong>Xin Chào,<br /> @Model.FullName</strong>
                     <!-- Form đăng xuất -->
                     <form asp-action="Logout" asp-controller="Authen" method="post" class="mb-0">
                         <button type="submit" class="btn btn-danger btn-sm">Đăng Xuất</button>

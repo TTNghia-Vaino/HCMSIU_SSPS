@@ -2,13 +2,14 @@
 
 @{
     ViewData["Title"] = "Create";
+    var gencode = Guid.NewGuid().ToString("N"); // tạo mã gencode cho giao dịch
 }
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <h1 class="text-center mt-4">Thực Hiện Giao Dịch</h1>
 
 <div class="container mt-4">
     <hr />
-
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card shadow-sm border-0">
@@ -20,8 +21,8 @@
                         <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-3" role="alert"></div>
 
                         <input type="hidden" name="UserId" value="@ViewBag.UserId" />
+                        <input type="hidden" id="Gencode" value="@gencode" />
 
-                        <!--Viết ajax về table SystemSettings tìm tới settingsid = 4 và lấy 1 biến rate = settings value, biến rate này nhân với amount cho ra 1 đoạn text kế bên, Tổng giá: amount * rate -->
                         <div class="form-group mb-3">
                             <label asp-for="Amount" class="form-label fw-bold">Số Lượng</label>
                             <input id="Amount" asp-for="Amount" class="form-control" placeholder="e.g., 100.00" />
@@ -29,15 +30,14 @@
                         </div>
 
                         <div class="form-group mb-3">
-                            <label asp-for="Description" class="form-label fw-bold">Nội Dung Giao Dịch (Tên người dùng + Tổng số trang)</label>
-                            <input asp-for="Description" class="form-control" placeholder="Nội Dung" />
+                            <label asp-for="Description" class="form-label fw-bold">Nội Dung Giao Dịch</label>
+                            <input id="Description" asp-for="Description" class="form-control" placeholder="Nội Dung" />
                             <span asp-validation-for="Description" class="text-danger"></span>
                         </div>
 
                         <div class="form-group mb-3">
                             <label class="form-label fw-bold">Tổng: </label>
-                            <span id="totalPriceText">0 </span> <span>VNĐ</span> <!-- Hiển thị kết quả tính toán --> 
-                            <!--Để VND ở cuối-->
+                            <span id="totalPriceText">0 </span> <span>VNĐ</span>
                         </div>
 
                         <!-- QR Code Section -->
@@ -52,7 +52,6 @@
                             </small>
                         </div>
 
-                        <!-- Buttons -->
                         <div class="d-flex justify-content-between mt-4 mb-4">
                             <a asp-action="Index" class="btn btn-secondary px-4">Lịch Sử Giao Dịch</a>
                             <a asp-action="Index" asp-controller="Home" class="btn btn-secondary">Quay Lại</a>
@@ -67,34 +66,89 @@
 
 <script>
     $(document).ready(function () {
-        // Lắng nghe sự kiện thay đổi giá trị của Amount
+        let gencode = $('#Gencode').val();
+        let pollingInterval = 10000; // 10 giây
+        let maxPollingTime = 5 * 60 * 1000; // 5 phút
+        let elapsedTime = 0;
+        let pollingTimer;
+
+        function updateQRCode(amount) {
+            if (amount > 0) {
+                // Nội dung chuyển khoản
+                var description = `Thanh toán ${gencode} - ${amount} VNĐ`;
+                $('#Description').val(description);
+
+                // QR code link
+                var qrUrl = `https://qr.sepay.vn/img?acc=0888804118888&bank=MB&amount=${amount}&des=${encodeURIComponent(gencode)}`;
+                $('#qrCode').attr('src', qrUrl);
+            } else {
+                $('#Description').val('');
+                $('#qrCode').attr('src', 'https://i.imgur.com/yiorE6W.png/v1/create-qr-code/?data=Payment%20Info&size=200x200');
+            }
+        }
+
         $('#Amount').on('input', function () {
-            var amount = parseFloat($('#Amount').val()) || 0; // Lấy giá trị Amount, nếu không hợp lệ thì dùng 0
+            var amount = parseFloat($('#Amount').val()) || 0;
 
             if (amount > 0) {
-                // Gửi yêu cầu Ajax để lấy rate
+                // Gọi API lấy rate
                 $.ajax({
-                    url: '/Transactions/GetRate', // Đường dẫn API lấy rate
+                    url: '/Transactions/GetRate',
                     type: 'GET',
                     success: function (response) {
                         if (response && response.rate) {
-                            var rate = response.rate; // Rate lấy từ API
-                            var totalPrice = amount * rate; // Tính tổng giá
+                            var rate = response.rate;
+                            var totalPrice = amount * rate;
 
-                            // Hiển thị kết quả tổng giá
-                            $('#totalPriceText').text(totalPrice.toFixed(2)); // Hiển thị với 2 chữ số thập phân
-                        }
-                        else {
+                            // Hiển thị tổng giá
+                            $('#totalPriceText').text(totalPrice.toFixed(2));
+
+                            // Cập nhật QR code với số tiền đã nhân rate
+                            updateQRCode(totalPrice.toFixed(2));
+                        } else {
                             console.error("Rate not found");
+                            $('#totalPriceText').text('0');
+                            updateQRCode(0);
                         }
                     },
                     error: function () {
                         console.error("Error fetching rate.");
+                        $('#totalPriceText').text('0');
+                        updateQRCode(0);
                     }
                 });
             } else {
-                $('#totalPriceText').text('0'); // Nếu Amount không hợp lệ thì hiển thị 0
+                $('#totalPriceText').text('0');
+                updateQRCode(0);
             }
         });
+
+        function checkTransactionStatus() {
+            $.ajax({
+                url: '/Transactions/CheckStatus',
+                type: 'GET',
+                data: { gencode: gencode },
+                success: function (response) {
+                    if (response && response.success) {
+                        clearInterval(pollingTimer);
+                        alert("Giao dịch thành công!");
+                        window.location.href = '/Home/Index';
+                    }
+                },
+                error: function () {
+                    console.error("Error checking transaction status.");
+                }
+            });
+
+            elapsedTime += pollingInterval;
+            if (elapsedTime >= maxPollingTime) {
+                clearInterval(pollingTimer);
+                alert("Hết thời gian chờ thanh toán. Vui lòng thử lại.");
+                window.location.href = '/Home/Index';
+            }
+        }
+
+        // Bắt đầu polling sau khi trang load
+        pollingTimer = setInterval(checkTransactionStatus, pollingInterval);
     });
 </script>

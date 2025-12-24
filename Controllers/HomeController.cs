@@ -2,6 +2,7 @@ using HCMSIU_SSPS.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using HCMSIU_SSPS.ViewModels;
 
 namespace HCMSIU_SSPS.Controllers
 {
@@ -19,8 +20,20 @@ namespace HCMSIU_SSPS.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            var username = HttpContext.Session.GetString("UserName");
+            var model = new IndexViewModel();
+
+            if (!string.IsNullOrEmpty(username))
+            {
+                model.FullName = _context.Users
+                                    .Where(u => u.UserName == username)
+                                    .Select(u => u.FullName)
+                                    .FirstOrDefault();
+            }
+
+            return View(model);
         }
+
         public IActionResult GetPageBalance(string userName)
         {
             var user = _context.Users.FirstOrDefault(u => u.UserName == userName);
