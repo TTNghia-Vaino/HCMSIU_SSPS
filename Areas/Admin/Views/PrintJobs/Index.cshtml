@@ -57,7 +57,11 @@
                 @foreach (var item in Model)
                 {
                     <tr>
-                        <td>@Html.DisplayFor(modelItem => item.FileName)</td>
+                        <td>
+                            <a href="~/uploads/@item.FileName" download="@item.FileName" title="Click để tải file">
+                                @Html.DisplayFor(modelItem => item.FileName)
+                            </a>
+                        </td>
                         <td>@Html.DisplayFor(modelItem => item.PageCount)</td>
                         <td>@Html.DisplayFor(modelItem => item.TotalPages)</td>
                         <td>@Html.DisplayFor(modelItem => item.Copies)</td>

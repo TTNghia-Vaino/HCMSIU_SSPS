@@ -35,7 +35,17 @@
                 @foreach (var item in Model)
                 {
                     <tr>
-                        <td>@Html.DisplayFor(modelItem => item.FileName)</td>
+                        <td>
+                            @{
+                                var displayFileName = item.FileName;
+                                if (!string.IsNullOrEmpty(item.FileName) && item.FileName.Contains("_"))
+                                {
+                                    // Tìm vị trí dấu gạch dưới đầu tiên và lấy phần chuỗi phía sau nó
+                                    displayFileName = item.FileName.Substring(item.FileName.IndexOf('_') + 1);
+                                }
+                            }
+                            @displayFileName
+                        </td>
                         <td>@Html.DisplayFor(modelItem => item.PageCount)</td>
                         <td>@Html.DisplayFor(modelItem => item.TotalPages)</td>
                         <td>@Html.DisplayFor(modelItem => item.Copies)</td>

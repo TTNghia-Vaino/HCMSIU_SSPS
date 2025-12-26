@@ -96,35 +96,37 @@ namespace HCMSIU_SSPS.Controllers
             if (file != null && file.Length > 0)
             {
                 var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads");
+                if (!Directory.Exists(uploadsFolder)) Directory.CreateDirectory(uploadsFolder);
 
-                if (!Directory.Exists(uploadsFolder))
-                {
-                    Directory.CreateDirectory(uploadsFolder);
-                }
+                // Tạo tiền tố ngẫu nhiên 8 ký tự + dấu gạch dưới
+                string prefix = Guid.NewGuid().ToString().Substring(0, 8);
+                string uniqueFileName = $"{prefix}_{file.FileName}";
 
-                var filePath = Path.Combine(uploadsFolder, file.FileName);
+                var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {
-                    await file.CopyToAsync(stream); // Lưu file vào thư mục
+                    await file.CopyToAsync(stream);
                 }
 
-                printJob.FileName = file.FileName;
+                // Lưu tên file đã có prefix vào Database
+                printJob.FileName = uniqueFileName;
 
-                // Lấy số trang từ file tùy thuộc vào định dạng file
+                // Xử lý lấy số trang (Sử dụng filePath đã có prefix)
                 var fileExtension = Path.GetExtension(file.FileName).ToLower();
-                switch (fileExtension)
+                try
                 {
-                    case ".pdf":
-                        printJob.PageCount = GetPdfPageCount(filePath);
-                        break;
-
-                    case ".pptx":
-                        printJob.PageCount = GetPptxSlideCount(filePath);
-                        break;
-
-                    default:
-                        ModelState.AddModelError("File", "Only PDF and PPTX files are supported.");
-                        break;
+                    switch (fileExtension)
+                    {
+                        case ".pdf": printJob.PageCount = GetPdfPageCount(filePath); break;
+                        case ".docx": printJob.PageCount = GetDocxPageCount(filePath); break;
+                        case ".pptx": printJob.PageCount = GetPptxSlideCount(filePath); break;
+                        default: ModelState.AddModelError("File", "Định dạng không hỗ trợ"); break;
+                    }
+                }
+                catch
+                {
+                    ModelState.AddModelError("File", "Lỗi đọc file, vui lòng thử lại.");
                 }
             }
 
@@ -141,7 +143,7 @@ namespace HCMSIU_SSPS.Controllers
                     ViewBag.UserId = userId;
                 }
 
-                ViewBag.PrinterId = new SelectList(_context.Printers, "PrinterId", "PrinterName");
+                ViewBag.PrinterList = new SelectList(_context.Printers, "PrinterId", "Location");
                 return View(printJob);
             }
 
@@ -225,6 +227,10 @@ namespace HCMSIU_SSPS.Controllers
                 {
                     pageCount = GetPptxSlideCount(tempFilePath);
                 }
+                else if (extension == ".docx") // sửa lại thành doc
+                {
+                    pageCount = GetDocxPageCount(tempFilePath);
+                }
                 else
                 {
                     return Json(new { success = false, message = "Xin lỗi, hệ thống không hỗ trợ loại file bạn gửi lên. Vui lòng liên hệ quản lý để biết thêm!" });
@@ -241,6 +247,19 @@ namespace HCMSIU_SSPS.Controllers
             catch (Exception ex)
             {
                 return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        private int GetDocxPageCount(string filePath)
+        {
+            using (WordprocessingDocument wordDoc = WordprocessingDocument.Open(filePath, false))
+            {
+                var properties = wordDoc.ExtendedFilePropertiesPart.Properties;
+                if (properties.Pages != null)
+                {
+                    return int.Parse(properties.Pages.Text);
+                }
+                return 1; // Mặc định là 1 nếu không đọc được
             }
         }
 
@@ -262,12 +281,20 @@ namespace HCMSIU_SSPS.Controllers
         }
 
         [HttpPost]
+        [HttpPost]
+        [HttpPost]
         public IActionResult CalculateTotalPages(int pageCount, bool isA3, bool isDoubleSided, int copies)
         {
-            // Tính TotalPages bằng logic đã đề xuất
-            int actualPages = isA3 ? pageCount * 2 : pageCount;
-            int pagesToPrint = isDoubleSided ? (int)Math.Ceiling(actualPages / 2.0) : actualPages;
-            int totalPages = pagesToPrint * copies;
+            // Bước 1: Tính số mặt giấy thực tế cần in (sau khi tính 2 mặt)
+            // Nếu in 2 mặt, số mặt giấy cần dùng = làm tròn lên của (tổng số trang / 2)
+            double sheetsNeeded = isDoubleSided ? Math.Ceiling(pageCount / 2.0) : pageCount;
+
+            // Bước 2: Áp dụng hệ số khổ giấy
+            // Nếu là A3, mỗi mặt giấy tính phí gấp 2 lần A4 (hoặc tùy quy định hệ thống của bạn)
+            double multiplier = isA3 ? 2.0 : 1.0;
+
+            // Bước 3: Tổng số trang = (Số tờ giấy) * (Hệ số khổ giấy) * (Số bản sao)
+            int totalPages = (int)(sheetsNeeded * multiplier * copies);
 
             return Json(new { totalPages = totalPages });
         }
