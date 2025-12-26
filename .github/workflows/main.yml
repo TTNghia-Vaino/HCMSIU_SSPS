@@ -1,0 +1,56 @@
+name: Deploy .NET MVC 
+
+on:
+  push:
+    branches: [ "main" ] # Chạy khi bạn push code vào nhánh main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    # 1. Setup môi trường .NET 8.0
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 8.0.x
+
+    # 2. Build và Publish ứng dụng
+    - name: Publish Project
+      run: dotnet publish -c Release -o ./publish
+
+    # 3. Nén folder publish để gửi đi cho nhanh
+    - name: Zip Artifact
+      run: zip -r publish.zip ./publish
+
+    # 4. Đẩy file lên Server bằng SSH Password
+    - name: Copy file via SSH
+      uses: appleboy/scp-action@v0.1.4
+      with:
+        host: ${{ secrets.SERVER_IP }}
+        username: root # Hoặc user của bạn
+        password: ${{ secrets.SERVER_PASSWORD }}
+        source: "publish.zip"
+        target: "/root/LTWeb/" # Thư mục đích trên server
+
+    # 5. Giải nén và Restart PM2 trên Server
+    - name: Execute Remote SSH commands
+      uses: appleboy/ssh-action@v0.1.10
+      with:
+        host: ${{ secrets.SERVER_IP }}
+        username: root
+        password: ${{ secrets.SERVER_PASSWORD }}
+        script: |
+          cd /root/LTWeb/
+          unzip -o publish.zip -d MVC_TEMP
+
+          rsync -av --exclude='appsettings.json' MVC_TEMP/publish/ MVC/
+          
+          rm -rf MVC_TEMP publish.zip
+          
+          # Restart ứng dụng qua PM2
+          cd /root/LTWeb/MVC
+          pm2 restart dotnet-mvc || pm2 start "dotnet ${{ secrets.PROJECT_NAME }}.dll --urls 'http://0.0.0.0:5001'" --name "dotnet-mvc"
+          pm2 save
