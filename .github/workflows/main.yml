@@ -2,7 +2,7 @@ name: Deploy .NET MVC
 
 on:
   push:
-    branches: [ "master" ] # Chạy khi bạn push code vào nhánh main
+    branches: [ "master" ] 
 
 jobs:
   build-and-deploy:
