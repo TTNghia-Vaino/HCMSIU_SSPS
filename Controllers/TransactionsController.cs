@@ -6,16 +6,21 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using HCMSIU_SSPS.Models;
+using DocumentFormat.OpenXml.Spreadsheet;
 
 namespace HCMSIU_SSPS.Controllers
 {
     public class TransactionsController : Controller
     {
         private readonly HcmsiuSspsContext _context;
+        private readonly IConfiguration _configuration;
+        private readonly HttpClient _httpClient;
 
-        public TransactionsController(HcmsiuSspsContext context)
+        public TransactionsController(HcmsiuSspsContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
+            _httpClient = new HttpClient();
         }
 
         // GET: Transactions
@@ -184,6 +189,68 @@ namespace HCMSIU_SSPS.Controllers
 
             return View(transaction);
         }
+
+        public class PythonResponse
+        {
+            public bool Exists { get; set; }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> CheckStatus(string gencode, int amount)
+        {
+            try
+            {
+                // 1. Python xác nhận thanh toán
+                string baseUrl = _configuration["ExternalApis:PythonWebhookUrl"];
+                string fullUrl = $"{baseUrl}/check-payment/{gencode}";
+
+                var response = await _httpClient.GetFromJsonAsync<PythonResponse>(fullUrl);
+                if (response == null || !response.Exists)
+                    return Json(new { success = false });
+
+                // 2. Lấy user
+                var username = HttpContext.Session.GetString("UserName");
+                if (string.IsNullOrEmpty(username))
+                    return Json(new { success = false });
+
+                var userId = await _context.Users
+                                           .Where(u => u.UserName == username)
+                                           .Select(u => u.UserId)
+                                           .FirstOrDefaultAsync();
+
+                if (userId == 0)
+                    return Json(new { success = false });
+
+
+                var nextId = (_context.Transactions.Max(t => (int?)t.TransactionId) ?? 0) + 1;
+                // 3. Insert transaction
+                var transaction = new Transaction
+                {
+                    TransactionId = nextId,
+                    UserId = userId,
+                    Amount = amount,        
+                    Status = 1,
+                    Description = gencode,
+                    Timestamp = DateTime.Now
+                };
+
+                _context.Transactions.Add(transaction);
+
+                var user = await _context.Users.FindAsync(userId);
+                user.PageBalance += amount;
+
+                await _context.SaveChangesAsync();
+
+
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
+
+
 
         // POST: Transactions/Delete/5
         [HttpPost, ActionName("Delete")]

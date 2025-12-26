@@ -65,8 +65,17 @@
 </div>
 
 <script>
+    function generateCode(length = 15) {
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        let result = '';
+        for (let i = 0; i < length; i++) {
+            result += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return result;
+    }
     $(document).ready(function () {
-        let gencode = $('#Gencode').val();
+        let gencode = generateCode(15);
+        $('#Gencode').val(gencode);
         let pollingInterval = 10000; // 10 giây
         let maxPollingTime = 5 * 60 * 1000; // 5 phút
         let elapsedTime = 0;
@@ -79,7 +88,7 @@
                 $('#Description').val(description);
 
                 // QR code link
-                var qrUrl = `https://qr.sepay.vn/img?acc=0888804118888&bank=MB&amount=${amount}&des=${encodeURIComponent(gencode)}`;
+                var qrUrl = `https://qr.sepay.vn/img?acc=0886224909&bank=MB&amount=${amount}&des=${encodeURIComponent(gencode)}`;
                 $('#qrCode').attr('src', qrUrl);
             } else {
                 $('#Description').val('');
@@ -124,10 +133,16 @@
         });
 
         function checkTransactionStatus() {
+
+            const amount = parseInt($('#Amount').val()) || 0;
+
             $.ajax({
                 url: '/Transactions/CheckStatus',
                 type: 'GET',
-                data: { gencode: gencode },
+                data: {
+                    gencode: gencode,
+                    amount: amount
+                },
                 success: function (response) {
                     if (response && response.success) {
                         clearInterval(pollingTimer);
@@ -147,6 +162,8 @@
                 window.location.href = '/Home/Index';
             }
         }
+
+
 
         // Bắt đầu polling sau khi trang load
         pollingTimer = setInterval(checkTransactionStatus, pollingInterval);
