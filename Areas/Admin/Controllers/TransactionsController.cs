@@ -189,6 +189,56 @@ namespace HCMSIU_SSPS.Areas.Admin.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [HttpPost]
+        public async Task<IActionResult> FilterByDate([FromBody] DateFilterModel filter)
+        {
+            if (filter == null)
+            {
+                return BadRequest("Filter data is required.");
+            }
+
+            // 1. Logic xử lý ngày tháng (Giống hệt code cũ của bạn)
+            var startDate = filter.StartDate;
+            var endDate = filter.EndDate;
+
+            if (endDate.HasValue)
+            {
+                // Lấy đến hết ngày hôm đó (23:59:59)
+                endDate = endDate.Value.Date.AddDays(1).AddTicks(-1);
+            }
+
+            // 2. Query dữ liệu
+            var query = _context.Transactions
+                .Include(t => t.User) // Include User để lấy tên
+                .AsQueryable();
+
+            // Áp dụng điều kiện lọc
+            if (startDate.HasValue)
+            {
+                query = query.Where(t => t.Timestamp >= startDate.Value);
+            }
+            if (endDate.HasValue)
+            {
+                query = query.Where(t => t.Timestamp <= endDate.Value);
+            }
+
+            // 3. Chọn dữ liệu trả về JSON (Select)
+            // Format luôn ngày tháng ở đây để JS đỡ phải xử lý
+            var result = await query
+                .OrderByDescending(t => t.Timestamp)
+                .Select(t => new {
+                    t.TransactionId,
+                    t.Amount,
+                    t.Status,
+                    t.Description,
+                    Timestamp = t.Timestamp.HasValue ? t.Timestamp.Value.ToString("g") : "",
+                    UserName = t.User != null ? t.User.UserName : "N/A"
+                })
+                .ToListAsync();
+
+            return Json(new { success = true, data = result });
+        }
+
         private bool TransactionExists(int id)
         {
             return _context.Transactions.Any(e => e.TransactionId == id);

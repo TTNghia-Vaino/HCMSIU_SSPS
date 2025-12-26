@@ -85,7 +85,7 @@
                                     data-status="@item.Status">
                                 Thay đổi Trạng Thái
                             </button>
-                            <a asp-action="Details" asp-route-id="@item.PrintJobId" class="btn btn-info btn-sm">Sửa</a>
+                            @* <a asp-action="Details" asp-route-id="@item.PrintJobId" class="btn btn-info btn-sm">Sửa</a> *@
                         </td>
                     </tr>
                 }
@@ -119,7 +119,7 @@
                 success: function (data) {
                     if (data.success) {
                         // Cập nhật lại trạng thái của thẻ <td> chứa Status
-                        var statusText = (data.newStatus === 0) ? 'Đang xử lý' : 'Đã in';
+                        var statusText = (data.newStatus === 0) ? 'Đang xử lý' : 'Đã xong';
 
                         // Cập nhật lại nội dung của thẻ <td> có data-id tương ứng cho Status
                         $('td[data-id="' + printJobId + '"]').text(statusText);
@@ -129,7 +129,7 @@
 
                         // Tìm dòng chứa printJobId và cập nhật cột EndTime (thẻ <td> thứ 2 trong dòng)
                         var row = button.closest('tr');  // Lấy dòng (row) của printJobId
-                        row.find('td:eq(6)').text(endTimeText);  // Cập nhật cột thứ 7 (EndTime) trong dòng (chỉ mục bắt đầu từ 0)
+                        row.find('td:eq(7)').text(endTimeText);  // Cập nhật cột thứ 7 (EndTime) trong dòng (chỉ mục bắt đầu từ 0)
 
                         // Cập nhật lại data-status của button để phù hợp với trạng thái mới
                         button.data('status', data.newStatus);

@@ -74,7 +74,8 @@ namespace HCMSIU_SSPS.Controllers
                 ViewBag.UserId = userId;
             }
 
-            ViewBag.PrinterId = new SelectList(_context.Printers, "PrinterId", "PrinterName");
+            ViewBag.PrinterList = new SelectList(_context.Printers, "PrinterId", "Location");
+
             return View();
         }
 

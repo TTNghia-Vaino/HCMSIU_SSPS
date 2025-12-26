@@ -24,11 +24,14 @@
                         <input type="hidden" name="UserId" value="@ViewBag.UserId" />
 
                         <div class="form-group">
-                            <div class="form-group">
-                                <label asp-for="PrinterId" class="control-label">Máy In</label>
-                                <!-- Sử dụng ViewBag để truyền danh sách Printer vào dropdown -->
-                                <select asp-for="PrinterId" class="form-control" asp-items="ViewBag.PrinterId"></select>
-                                <span asp-validation-for="PrinterId" class="text-danger"></span>
+                            <label asp-for="PrinterId" class="control-label">Chọn địa điểm máy in</label>
+
+                            <select asp-for="PrinterId" class="form-control" asp-items="ViewBag.PrinterList">
+                                <option value="">-- Chọn địa điểm nhận tài liệu --</option>
+                            </select>
+
+                            <span asp-validation-for="PrinterId" class="text-danger"></span>
+                        </div>
                         <!--Truyền file vào, sau khi submit tạo file trong hệ thống trong folder uploads, sau đó lấy file tên cho filename-->
                         <div class="form-group">
                             <label class="control-label" for="file">Tải File lên</label>
