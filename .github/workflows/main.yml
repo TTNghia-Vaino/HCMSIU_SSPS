@@ -46,7 +46,7 @@ jobs:
           cd /root/LTWeb/
           unzip -o publish.zip -d MVC_TEMP
 
-          rsync -av --exclude='appsettings.json' MVC_TEMP/publish/ MVC/
+          rsync -av --exclude='appsettings.json' --exclude='wwwroot/uploads/' MVC_TEMP/publish/ MVC/
           
           rm -rf MVC_TEMP publish.zip
           
