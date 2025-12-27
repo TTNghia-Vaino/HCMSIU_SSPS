@@ -22,27 +22,19 @@ jobs:
       run: |
         dotnet restore
         dotnet publish -c Release -o ./publish
-        cd publish
-        cd wwwwroot
-        ls
-        cd uploads
-        ls
-        
-    # 3. Nén folder publish (giúp truyền tải qua SCP nhanh hơn)
-    - name: Zip Artifact
-      run: zip -r publish.zip ./publish
 
-    # 4. Đẩy file lên Server bằng SSH Key
+    # 3. Đẩy folder publish lên Server (Đẩy vào folder tạm để tránh xung đột file đang chạy)
     - name: Copy file via SSH
       uses: appleboy/scp-action@v0.1.7
       with:
         host: ${{ secrets.SERVER_IP }}
         username: root
         key: ${{ secrets.SSH_KEY }}
-        source: "publish.zip"
-        target: "/root/LTWeb/" 
+        source: "publish/*"
+        target: "/root/LTWeb/MVC_TEMP" # Đẩy vào thư mục tạm này
+        strip_components: 1 # Loại bỏ folder "publish/" ở đầu để file nằm thẳng trong MVC_TEMP
 
-    # 5. Giải nén, Rsync giữ data và Restart ứng dụng
+    # 4. Rsync giữ data và Restart ứng dụng
     - name: Execute Remote SSH commands
       uses: appleboy/ssh-action@v1.0.3
       with:
@@ -50,29 +42,18 @@ jobs:
         username: root
         key: ${{ secrets.SSH_KEY }}
         script: |
-          # Di chuyển vào thư mục làm việc
-          cd /root/LTWeb/
-          
-          # Giải nén đè lên folder tạm
-          unzip -o publish.zip -d MVC_TEMP
-          
           # Đảm bảo thư mục đích tồn tại
-          mkdir -p MVC
+          mkdir -p /root/LTWeb/MVC
           
-          # Dùng rsync để cập nhật code nhưng GIỮ LẠI data cũ:
-          # --exclude='appsettings.json': Không ghi đè file cấu hình DB
-          # --exclude='wwwroot/uploads/': Giữ lại ảnh/file người dùng đã upload
-          rsync -av --exclude='appsettings.json' --exclude='wwwroot/uploads/' MVC_TEMP/publish/ MVC/
+          # Dùng rsync để đồng bộ từ vùng tạm (MVC_TEMP) vào vùng chạy thật (MVC)
+          # --exclude='appsettings.json': Giữ file config cũ trên server (quan trọng!)
+          # --exclude='wwwroot/uploads/': Giữ lại toàn bộ ảnh user đã upload
+          rsync -av --exclude='appsettings.json' --exclude='wwwroot/uploads/' /root/LTWeb/MVC_TEMP/ /root/LTWeb/MVC/
           
-          # Dọn dẹp file tạm cho sạch server
-          rm -rf MVC_TEMP publish.zip
+          # Dọn dẹp folder tạm cho sạch server
+          rm -rf /root/LTWeb/MVC_TEMP
           
           # Khởi động lại ứng dụng bằng PM2
           cd /root/LTWeb/MVC
-          
-          # Kiểm tra nếu app đã chạy thì restart, nếu chưa thì start mới
-          # Thay 'YourApp.dll' bằng tên file dll thật của bạn hoặc dùng secret PROJECT_NAME
           pm2 restart dotnet-mvc || pm2 start "dotnet ${{ secrets.PROJECT_NAME }}.dll --urls 'http://0.0.0.0:5001'" --name "dotnet-mvc"
-          
-          # Lưu trạng thái PM2 để tự khởi động lại khi reboot server
           pm2 save
