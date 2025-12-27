@@ -1,0 +1,73 @@
+name: Deploy .NET MVC 
+
+on:
+  push:
+    branches: [ "master" ] 
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    # 1. Setup môi trường .NET 8.0
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 8.0.x
+
+    # 2. Build và Publish ứng dụng
+    - name: Publish Project
+      run: |
+        dotnet restore
+        dotnet publish -c Release -o ./publish
+
+    # 3. Nén folder publish (giúp truyền tải qua SCP nhanh hơn)
+    - name: Zip Artifact
+      run: zip -r publish.zip ./publish
+
+    # 4. Đẩy file lên Server bằng SSH Key
+    - name: Copy file via SSH
+      uses: appleboy/scp-action@v0.1.7
+      with:
+        host: ${{ secrets.SERVER_IP }}
+        username: root
+        key: ${{ secrets.SSH_KEY }}
+        source: "publish.zip"
+        target: "/root/LTWeb/" 
+
+    # 5. Giải nén, Rsync giữ data và Restart ứng dụng
+    - name: Execute Remote SSH commands
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.SERVER_IP }}
+        username: root
+        key: ${{ secrets.SSH_KEY }}
+        script: |
+          # Di chuyển vào thư mục làm việc
+          cd /root/LTWeb/
+          
+          # Giải nén đè lên folder tạm
+          unzip -o publish.zip -d MVC_TEMP
+          
+          # Đảm bảo thư mục đích tồn tại
+          mkdir -p MVC
+          
+          # Dùng rsync để cập nhật code nhưng GIỮ LẠI data cũ:
+          # --exclude='appsettings.json': Không ghi đè file cấu hình DB
+          # --exclude='wwwroot/uploads/': Giữ lại ảnh/file người dùng đã upload
+          rsync -av --exclude='appsettings.json' --exclude='wwwroot/uploads/' MVC_TEMP/publish/ MVC/
+          
+          # Dọn dẹp file tạm cho sạch server
+          rm -rf MVC_TEMP publish.zip
+          
+          # Khởi động lại ứng dụng bằng PM2
+          cd /root/LTWeb/MVC
+          
+          # Kiểm tra nếu app đã chạy thì restart, nếu chưa thì start mới
+          # Thay 'YourApp.dll' bằng tên file dll thật của bạn hoặc dùng secret PROJECT_NAME
+          pm2 restart dotnet-mvc || pm2 start "dotnet ${{ secrets.PROJECT_NAME }}.dll --urls 'http://0.0.0.0:5001'" --name "dotnet-mvc"
+          
+          # Lưu trạng thái PM2 để tự khởi động lại khi reboot server
+          pm2 save
