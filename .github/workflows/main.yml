@@ -22,7 +22,12 @@ jobs:
       run: |
         dotnet restore
         dotnet publish -c Release -o ./publish
-
+        cd publish
+        cd wwwwroot
+        ls
+        cd uploads
+        ls
+        
     # 3. Nén folder publish (giúp truyền tải qua SCP nhanh hơn)
     - name: Zip Artifact
       run: zip -r publish.zip ./publish
