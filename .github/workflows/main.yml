@@ -54,7 +54,7 @@ jobs:
           # thì ĐỪNG đè lên folder uploads ở đích (nơi chứa ảnh thật)".
 
 
-          rsync -av --exclude='appsettings.json' /root/LTWeb/MVC_TEMP/ /root/LTWeb/MVC/
+          rsync -avI --exclude='appsettings.json' /root/LTWeb/MVC_TEMP/ /root/LTWeb/MVC/
           
           # 4. Cấp quyền ghi cho folder uploads (để web có thể lưu ảnh)
           chmod -R 777 /root/LTWeb/MVC/wwwroot/uploads
