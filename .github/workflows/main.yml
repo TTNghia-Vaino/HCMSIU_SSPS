@@ -42,18 +42,22 @@ jobs:
         username: root
         key: ${{ secrets.SSH_KEY }}
         script: |
-          # Đảm bảo thư mục đích tồn tại
-          mkdir -p /root/LTWeb/MVC
+          # 1. Tạo sẵn cấu trúc thư mục trên server nếu chưa có
+          mkdir -p /root/LTWeb/MVC/wwwroot/uploads
           
-          # Dùng rsync để đồng bộ từ vùng tạm (MVC_TEMP) vào vùng chạy thật (MVC)
-          # --exclude='appsettings.json': Giữ file config cũ trên server (quan trọng!)
-          # --exclude='wwwroot/uploads/': Giữ lại toàn bộ ảnh user đã upload
+          # 2. Đảm bảo thư mục tạm tồn tại để tránh lỗi rsync
+          mkdir -p /root/LTWeb/MVC_TEMP
+          
+          # 3. Đồng bộ code (Lưu ý dấu / ở cuối đường dẫn nguồn)
+          # --exclude='wwwroot/uploads/': Lệnh này cực kỳ quan trọng. 
+          # Nó bảo rsync: "Nếu thấy folder uploads ở nguồn (thường là trống) 
+          # thì ĐỪNG đè lên folder uploads ở đích (nơi chứa ảnh thật)".
           rsync -av --exclude='appsettings.json' --exclude='wwwroot/uploads/' /root/LTWeb/MVC_TEMP/ /root/LTWeb/MVC/
           
-          # Dọn dẹp folder tạm cho sạch server
-          rm -rf /root/LTWeb/MVC_TEMP
+          # 4. Cấp quyền ghi cho folder uploads (để web có thể lưu ảnh)
+          chmod -R 777 /root/LTWeb/MVC/wwwroot/uploads
           
-          # Khởi động lại ứng dụng bằng PM2
+          # 5. Dọn dẹp và Restart
+          # rm -rf /root/LTWeb/MVC_TEMP
           cd /root/LTWeb/MVC
           pm2 restart dotnet-mvc || pm2 start "dotnet ${{ secrets.PROJECT_NAME }}.dll --urls 'http://0.0.0.0:5001'" --name "dotnet-mvc"
-          pm2 save
