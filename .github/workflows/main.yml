@@ -52,12 +52,12 @@ jobs:
           # --exclude='wwwroot/uploads/': Lệnh này cực kỳ quan trọng. 
           # Nó bảo rsync: "Nếu thấy folder uploads ở nguồn (thường là trống) 
           # thì ĐỪNG đè lên folder uploads ở đích (nơi chứa ảnh thật)".
-          rsync -av --exclude='appsettings.json' --exclude='wwwroot/uploads/' /root/LTWeb/MVC_TEMP/ /root/LTWeb/MVC/
+          rsync -avU --exclude='appsettings.json' --exclude='wwwroot/uploads/' /root/LTWeb/MVC_TEMP/ /root/LTWeb/MVC/
           
           # 4. Cấp quyền ghi cho folder uploads (để web có thể lưu ảnh)
           chmod -R 777 /root/LTWeb/MVC/wwwroot/uploads
           
           # 5. Dọn dẹp và Restart
-          # rm -rf /root/LTWeb/MVC_TEMP
+          rm -rf /root/LTWeb/MVC_TEMP
           cd /root/LTWeb/MVC
           pm2 restart dotnet-mvc || pm2 start "dotnet ${{ secrets.PROJECT_NAME }}.dll --urls 'http://0.0.0.0:5001'" --name "dotnet-mvc"
