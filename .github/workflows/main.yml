@@ -42,24 +42,39 @@ jobs:
         username: root
         key: ${{ secrets.SSH_KEY }}
         script: |
-          # 1. Tạo sẵn cấu trúc thư mục trên server nếu chưa có
-          mkdir -p /root/LTWeb/MVC/wwwroot/uploads
-          
-          # 2. Đảm bảo thư mục tạm tồn tại để tránh lỗi rsync
-          mkdir -p /root/LTWeb/MVC_TEMP
-          
-          # 3. Đồng bộ code (Lưu ý dấu / ở cuối đường dẫn nguồn)
-          # --exclude='wwwroot/uploads/': Lệnh này cực kỳ quan trọng. 
-          # Nó bảo rsync: "Nếu thấy folder uploads ở nguồn (thường là trống) 
-          # thì ĐỪNG đè lên folder uploads ở đích (nơi chứa ảnh thật)".
-
-
-          rsync -avI --exclude='appsettings.json' /root/LTWeb/MVC_TEMP/ /root/LTWeb/MVC/
-          
-          # 4. Cấp quyền ghi cho folder uploads (để web có thể lưu ảnh)
-          chmod -R 777 /root/LTWeb/MVC/wwwroot/uploads
-          
-          # 5. Dọn dẹp và Restart
-          rm -rf /root/LTWeb/MVC_TEMP
-          cd /root/LTWeb/MVC
-          pm2 restart dotnet-mvc || pm2 start "dotnet ${{ secrets.PROJECT_NAME }}.dll --urls 'http://0.0.0.0:5001'" --name "dotnet-mvc"
+          set -e
+    
+          MVC_PATH=/root/LTWeb/MVC
+          TEMP_PATH=/root/LTWeb/MVC_TEMP
+          UPLOAD_BACKUP=/root/LTWeb/uploads_backup
+    
+          echo "==> 1. Backup uploads"
+          mkdir -p $UPLOAD_BACKUP
+          if [ -d "$MVC_PATH/wwwroot/uploads" ]; then
+            rsync -a $MVC_PATH/wwwroot/uploads/ $UPLOAD_BACKUP/
+          fi
+    
+          echo "==> 2. Xóa toàn bộ MVC"
+          rm -rf $MVC_PATH
+          mkdir -p $MVC_PATH
+    
+          echo "==> 3. Copy toàn bộ code mới"
+          rsync -avI \
+            --exclude='appsettings.json' \
+            $TEMP_PATH/ $MVC_PATH/
+    
+          echo "==> 4. Restore uploads (có update mới thì đè)"
+          mkdir -p $MVC_PATH/wwwroot/uploads
+          rsync -a $UPLOAD_BACKUP/ $MVC_PATH/wwwroot/uploads/
+    
+          echo "==> 5. Cấp quyền ghi uploads"
+          chmod -R 777 $MVC_PATH/wwwroot/uploads
+    
+          echo "==> 6. Cleanup"
+          rm -rf $TEMP_PATH
+          rm -rf $UPLOAD_BACKUP
+    
+          echo "==> 7. Restart ứng dụng"
+          cd $MVC_PATH
+          pm2 restart dotnet-mvc || \
+          pm2 start "dotnet ${{ secrets.PROJECT_NAME }}.dll --urls 'http://0.0.0.0:5001'" --name "dotnet-mvc"
